@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import '../controllers/profile_controller.dart';
 
 class AddressesView extends StatefulWidget {
   const AddressesView({Key? key}) : super(key: key);
@@ -9,10 +11,9 @@ class AddressesView extends StatefulWidget {
 }
 
 class _AddressesViewState extends State<AddressesView> {
-  List<String> addresses = [
-    '123 Main St, Springfield, USA',
-    '456 Market Ave, Lagos, Nigeria',
-  ];
+  final ProfileController profileController = Get.isRegistered<ProfileController>()
+      ? Get.find<ProfileController>()
+      : Get.put(ProfileController());
 
   void _showAddressDialog({String? initial, int? editIndex}) {
     final controller = TextEditingController(text: initial ?? '');
@@ -36,13 +37,11 @@ class _AddressesViewState extends State<AddressesView> {
             onPressed: () {
               final text = controller.text.trim();
               if (text.isNotEmpty) {
-                setState(() {
-                  if (editIndex == null) {
-                    addresses.add(text);
-                  } else {
-                    addresses[editIndex] = text;
-                  }
-                });
+                if (editIndex == null) {
+                  profileController.addresses.add(text);
+                } else {
+                  profileController.addresses[editIndex!] = text;
+                }
                 Navigator.pop(context);
               }
             },
@@ -66,9 +65,7 @@ class _AddressesViewState extends State<AddressesView> {
           ),
           ElevatedButton(
             onPressed: () {
-              setState(() {
-                addresses.removeAt(index);
-              });
+              profileController.addresses.removeAt(index);
               Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
@@ -93,11 +90,11 @@ class _AddressesViewState extends State<AddressesView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: ListView.separated(
-                itemCount: addresses.length,
+              child: Obx(() => ListView.separated(
+                itemCount: profileController.addresses.length,
                 separatorBuilder: (_, __) => SizedBox(height: 16.h),
                 itemBuilder: (context, index) {
-                  final address = addresses[index];
+                  final address = profileController.addresses[index];
                   return Container(
                     padding: EdgeInsets.all(16.w),
                     decoration: BoxDecoration(
@@ -124,7 +121,7 @@ class _AddressesViewState extends State<AddressesView> {
                     ),
                   );
                 },
-              ),
+              )),
             ),
             24.verticalSpace,
             SizedBox(

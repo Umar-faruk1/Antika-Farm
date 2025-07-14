@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import '../controllers/profile_controller.dart';
 
 class PaymentMethodsView extends StatefulWidget {
   const PaymentMethodsView({Key? key}) : super(key: key);
@@ -9,10 +11,9 @@ class PaymentMethodsView extends StatefulWidget {
 }
 
 class _PaymentMethodsViewState extends State<PaymentMethodsView> {
-  List<Map<String, String>> paymentMethods = [
-    {'type': 'Credit Card', 'details': '**** **** **** 1234'},
-    {'type': 'PayPal', 'details': 'user@email.com'},
-  ];
+  final ProfileController profileController = Get.isRegistered<ProfileController>()
+      ? Get.find<ProfileController>()
+      : Get.put(ProfileController());
 
   void _showPaymentDialog({Map<String, String>? initial, int? editIndex}) {
     final typeController = TextEditingController(text: initial?['type'] ?? '');
@@ -45,13 +46,11 @@ class _PaymentMethodsViewState extends State<PaymentMethodsView> {
               final type = typeController.text.trim();
               final details = detailsController.text.trim();
               if (type.isNotEmpty && details.isNotEmpty) {
-                setState(() {
-                  if (editIndex == null) {
-                    paymentMethods.add({'type': type, 'details': details});
-                  } else {
-                    paymentMethods[editIndex] = {'type': type, 'details': details};
-                  }
-                });
+                if (editIndex == null) {
+                  profileController.paymentMethods.add({'type': type, 'details': details});
+                } else {
+                  profileController.paymentMethods[editIndex!] = {'type': type, 'details': details};
+                }
                 Navigator.pop(context);
               }
             },
@@ -75,9 +74,7 @@ class _PaymentMethodsViewState extends State<PaymentMethodsView> {
           ),
           ElevatedButton(
             onPressed: () {
-              setState(() {
-                paymentMethods.removeAt(index);
-              });
+              profileController.paymentMethods.removeAt(index);
               Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
@@ -102,11 +99,11 @@ class _PaymentMethodsViewState extends State<PaymentMethodsView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: ListView.separated(
-                itemCount: paymentMethods.length,
+              child: Obx(() => ListView.separated(
+                itemCount: profileController.paymentMethods.length,
                 separatorBuilder: (_, __) => SizedBox(height: 16.h),
                 itemBuilder: (context, index) {
-                  final method = paymentMethods[index];
+                  final method = profileController.paymentMethods[index];
                   return Container(
                     padding: EdgeInsets.all(16.w),
                     decoration: BoxDecoration(
@@ -140,7 +137,7 @@ class _PaymentMethodsViewState extends State<PaymentMethodsView> {
                     ),
                   );
                 },
-              ),
+              )),
             ),
             24.verticalSpace,
             SizedBox(

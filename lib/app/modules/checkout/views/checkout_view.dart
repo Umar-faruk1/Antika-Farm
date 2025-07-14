@@ -7,6 +7,7 @@ import '../../../../utils/constants.dart';
 import '../../../components/custom_button.dart';
 import '../../../components/custom_icon_button.dart';
 import '../controllers/checkout_controller.dart';
+import '../../profile/controllers/profile_controller.dart';
 
 class CheckoutView extends GetView<CheckoutController> {
   const CheckoutView({Key? key}) : super(key: key);
@@ -14,6 +15,9 @@ class CheckoutView extends GetView<CheckoutController> {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
+    final ProfileController profileController = Get.isRegistered<ProfileController>()
+        ? Get.find<ProfileController>()
+        : Get.put(ProfileController());
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -55,16 +59,22 @@ class CheckoutView extends GetView<CheckoutController> {
                   ),
                 ),
                 16.verticalSpace,
-                TextField(
-                  onChanged: controller.setDeliveryAddress,
+                Obx(() => DropdownButtonFormField<String>(
+                  value: profileController.addresses.isNotEmpty ? controller.deliveryAddress.value.isNotEmpty ? controller.deliveryAddress.value : profileController.addresses.first : null,
+                  items: profileController.addresses.map((address) => DropdownMenuItem(
+                    value: address,
+                    child: Text(address),
+                  )).toList(),
+                  onChanged: (val) {
+                    if (val != null) controller.setDeliveryAddress(val);
+                  },
                   decoration: InputDecoration(
-                    hintText: 'Enter your delivery address',
+                    hintText: 'Select your delivery address',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                   ),
-                  maxLines: 3,
-                ),
+                )),
                 32.verticalSpace,
                 Text(
                   'Payment Method',
@@ -73,11 +83,22 @@ class CheckoutView extends GetView<CheckoutController> {
                   ),
                 ),
                 16.verticalSpace,
-                _buildPaymentMethodCard('Credit Card', Icons.credit_card),
-                8.verticalSpace,
-                _buildPaymentMethodCard('PayPal', Icons.payment),
-                8.verticalSpace,
-                _buildPaymentMethodCard('Cash on Delivery', Icons.money),
+                Obx(() => DropdownButtonFormField<String>(
+                  value: profileController.paymentMethods.isNotEmpty ? controller.selectedPaymentMethod.value : null,
+                  items: profileController.paymentMethods.map((method) => DropdownMenuItem(
+                    value: method['type'],
+                    child: Text('${method['type']} (${method['details']})'),
+                  )).toList(),
+                  onChanged: (val) {
+                    if (val != null) controller.setPaymentMethod(val);
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Select payment method',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                  ),
+                )),
                 32.verticalSpace,
                 Text(
                   'Order Summary',
@@ -144,35 +165,5 @@ class CheckoutView extends GetView<CheckoutController> {
         ),
       ),
     );
-  }
-
-  Widget _buildPaymentMethodCard(String title, IconData icon) {
-    return Obx(() => GestureDetector(
-      onTap: () => controller.setPaymentMethod(title),
-      child: Container(
-        padding: EdgeInsets.all(16.w),
-        decoration: BoxDecoration(
-          color: controller.selectedPaymentMethod.value == title 
-              ? Get.theme.primaryColor.withOpacity(0.1)
-              : Get.theme.cardColor,
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(
-            color: controller.selectedPaymentMethod.value == title 
-                ? Get.theme.primaryColor
-                : Get.theme.dividerColor,
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 24.w, color: Get.theme.primaryColor),
-            12.horizontalSpace,
-            Text(title, style: Get.theme.textTheme.bodyLarge),
-            const Spacer(),
-            if (controller.selectedPaymentMethod.value == title)
-              Icon(Icons.check_circle, color: Get.theme.primaryColor),
-          ],
-        ),
-      ),
-    ));
   }
 } 

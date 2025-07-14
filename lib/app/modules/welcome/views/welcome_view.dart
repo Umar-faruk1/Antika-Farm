@@ -55,7 +55,7 @@ class WelcomeView extends GetView<WelcomeController> {
                 ),
                 24.verticalSpace,
                 Text(
-                  'We’re glad you’re here. \nManage your farm, track your produce, and grow your agribusiness effortlessly!',
+                  'We’re glad you’re here.\nManage your farm, track your produce, and grow your agribusiness effortlessly!',
                   style: theme.textTheme.bodyLarge,
                   textAlign: TextAlign.center,
                 ).animate().fade().slideY(
