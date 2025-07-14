@@ -44,100 +44,102 @@ class CheckoutView extends GetView<CheckoutController> {
       body: GetBuilder<CheckoutController>(
         builder: (_) => Padding(
           padding: EdgeInsets.all(24.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Delivery Address',
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              16.verticalSpace,
-              TextField(
-                onChanged: controller.setDeliveryAddress,
-                decoration: InputDecoration(
-                  hintText: 'Enter your delivery address',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Delivery Address',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                maxLines: 3,
-              ),
-              32.verticalSpace,
-              Text(
-                'Payment Method',
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              16.verticalSpace,
-              _buildPaymentMethodCard('Credit Card', Icons.credit_card),
-              8.verticalSpace,
-              _buildPaymentMethodCard('PayPal', Icons.payment),
-              8.verticalSpace,
-              _buildPaymentMethodCard('Cash on Delivery', Icons.money),
-              32.verticalSpace,
-              Text(
-                'Order Summary',
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              16.verticalSpace,
-              Container(
-                padding: EdgeInsets.all(16.w),
-                decoration: BoxDecoration(
-                  color: theme.cardColor,
-                  borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: theme.dividerColor),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Subtotal', style: theme.textTheme.bodyLarge),
-                        Text('\$${controller.totalAmount.toStringAsFixed(2)}', 
-                              style: theme.textTheme.bodyLarge),
-                      ],
+                16.verticalSpace,
+                TextField(
+                  onChanged: controller.setDeliveryAddress,
+                  decoration: InputDecoration(
+                    hintText: 'Enter your delivery address',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.r),
                     ),
-                    8.verticalSpace,
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Delivery Fee', style: theme.textTheme.bodyLarge),
-                        Text('\$5.00', style: theme.textTheme.bodyLarge),
-                      ],
-                    ),
-                    16.verticalSpace,
-                    Divider(color: theme.dividerColor),
-                    8.verticalSpace,
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Total', style: theme.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        )),
-                        Text('\$${(controller.totalAmount + 5.0).toStringAsFixed(2)}', 
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        )),
-                      ],
-                    ),
-                  ],
+                  ),
+                  maxLines: 3,
                 ),
-              ),
-              const Spacer(),
-              Obx(() => CustomButton(
-                text: controller.isLoading.value ? 'Processing...' : 'Place Order',
-                onPressed: controller.isLoading.value ? null : controller.processOrder,
-                fontSize: 16.sp,
-                radius: 50.r,
-                verticalPadding: 16.h,
-                hasShadow: false,
-              )),
-            ],
+                32.verticalSpace,
+                Text(
+                  'Payment Method',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                16.verticalSpace,
+                _buildPaymentMethodCard('Credit Card', Icons.credit_card),
+                8.verticalSpace,
+                _buildPaymentMethodCard('PayPal', Icons.payment),
+                8.verticalSpace,
+                _buildPaymentMethodCard('Cash on Delivery', Icons.money),
+                32.verticalSpace,
+                Text(
+                  'Order Summary',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                16.verticalSpace,
+                Container(
+                  padding: EdgeInsets.all(16.w),
+                  decoration: BoxDecoration(
+                    color: theme.cardColor,
+                    borderRadius: BorderRadius.circular(12.r),
+                    border: Border.all(color: theme.dividerColor),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Subtotal', style: theme.textTheme.bodyLarge),
+                          Text('\$${controller.totalAmount.toStringAsFixed(2)}', 
+                                style: theme.textTheme.bodyLarge),
+                        ],
+                      ),
+                      8.verticalSpace,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Delivery Fee', style: theme.textTheme.bodyLarge),
+                          Text('\$5.00', style: theme.textTheme.bodyLarge),
+                        ],
+                      ),
+                      16.verticalSpace,
+                      Divider(color: theme.dividerColor),
+                      8.verticalSpace,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Total', style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          )),
+                          Text('\$${(controller.totalAmount + 5.0).toStringAsFixed(2)}', 
+                                style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          )),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 24.h),
+                Obx(() => CustomButton(
+                  text: controller.isLoading.value ? 'Processing...' : 'Place Order',
+                  onPressed: controller.isLoading.value ? null : controller.processOrder,
+                  fontSize: 16.sp,
+                  radius: 50.r,
+                  verticalPadding: 16.h,
+                  hasShadow: false,
+                )),
+              ],
+            ),
           ),
         ),
       ),
