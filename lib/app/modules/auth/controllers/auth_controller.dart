@@ -1,8 +1,15 @@
+import 'package:antika_farm/app/data/models/user_model.dart';
 import 'package:get/get.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class AuthController extends GetxController {
   final isLoading = false.obs;
   final isLoggedIn = false.obs;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  UserModel? currentUser;
 
   void setLoading(bool value) {
     isLoading.value = value;
@@ -15,12 +22,23 @@ class AuthController extends GetxController {
   Future<void> login(String email, String password) async {
     setLoading(true);
     try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      final credential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      final userDoc = await _firestore.collection('users').doc(credential.user!.uid).get();
+      if (!userDoc.exists) {
+        throw Exception('User data not found');
+      }
+      currentUser = UserModel.fromMap(userDoc.data()!);
+      if (currentUser!.status != 'active') {
+        throw Exception('Account is not active');
+      }
       setLoggedIn(true);
-      Get.offAllNamed('/base');
+      if (currentUser!.role == 'admin') {
+        Get.offAllNamed('/admin');
+      } else {
+        Get.offAllNamed('/base');
+      }
     } catch (e) {
-      Get.snackbar('Error', 'Login failed');
+      Get.snackbar('Error', e.toString());
     } finally {
       setLoading(false);
     }
@@ -29,12 +47,27 @@ class AuthController extends GetxController {
   Future<void> register(String name, String email, String password) async {
     setLoading(true);
     try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      final credential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      // Check if this is the first user (admin)
+      final usersSnapshot = await _firestore.collection('users').get();
+      String role = usersSnapshot.docs.isEmpty ? 'admin' : 'user';
+      final userModel = UserModel(
+        uid: credential.user!.uid,
+        name: name,
+        email: email,
+        role: role,
+        status: 'active',
+      );
+      await _firestore.collection('users').doc(credential.user!.uid).set(userModel.toMap());
+      currentUser = userModel;
       setLoggedIn(true);
-      Get.offAllNamed('/base');
+      if (currentUser!.role == 'admin') {
+        Get.offAllNamed('/admin');
+      } else {
+        Get.offAllNamed('/base');
+      }
     } catch (e) {
-      Get.snackbar('Error', 'Registration failed');
+      Get.snackbar('Error', e.toString());
     } finally {
       setLoading(false);
     }
@@ -43,19 +76,20 @@ class AuthController extends GetxController {
   Future<void> forgotPassword(String email) async {
     setLoading(true);
     try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      await _auth.sendPasswordResetEmail(email: email);
       Get.snackbar('Success', 'Password reset email sent');
       Get.back();
     } catch (e) {
-      Get.snackbar('Error', 'Failed to send reset email');
+      Get.snackbar('Error', e.toString());
     } finally {
       setLoading(false);
     }
   }
 
-  void logout() {
+  void logout() async {
+    await _auth.signOut();
     setLoggedIn(false);
-    Get.offAllNamed('/welcome');
+    currentUser = null;
+    Get.offAllNamed('/login');
   }
 } 

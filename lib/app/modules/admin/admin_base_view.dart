@@ -5,6 +5,7 @@ import 'admin_products_view.dart';
 import 'admin_categories_view.dart';
 import 'admin_users_view.dart';
 import 'admin_orders_view.dart';
+import 'package:antika_farm/app/modules/auth/controllers/auth_controller.dart';
 
 class AdminBaseView extends StatefulWidget {
   const AdminBaseView({Key? key}) : super(key: key);
@@ -34,6 +35,18 @@ class _AdminBaseViewState extends State<AdminBaseView> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Get.back(),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              if (!Get.isRegistered<AuthController>()) {
+                Get.put(AuthController());
+              }
+              Get.find<AuthController>().logout();
+            },
+            tooltip: 'Logout',
+          ),
+        ],
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(

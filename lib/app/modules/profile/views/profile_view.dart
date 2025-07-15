@@ -7,6 +7,7 @@ import '../../../../utils/constants.dart';
 import '../../../components/custom_icon_button.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/profile_controller.dart';
+import '../../auth/controllers/auth_controller.dart';
 
 class ProfileView extends GetView<ProfileController> {
   const ProfileView({Key? key}) : super(key: key);
@@ -55,17 +56,23 @@ class ProfileView extends GetView<ProfileController> {
               ),
             ),
             24.verticalSpace,
-            Text(
-              'Umar Faruk',
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            8.verticalSpace,
-            Text(
-              'umarfaruk@gmail.com',
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.textTheme.bodySmall?.color,
+            GetBuilder<AuthController>(
+              builder: (authController) => Column(
+                children: [
+                  Text(
+                    authController.currentUser?.name ?? '',
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  8.verticalSpace,
+                  Text(
+                    authController.currentUser?.email ?? '',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.textTheme.bodySmall?.color,
+                    ),
+                  ),
+                ],
               ),
             ),
             40.verticalSpace,
@@ -116,22 +123,6 @@ class ProfileView extends GetView<ProfileController> {
               onTap: () => Get.offAllNamed(Routes.LOGIN),
               theme: theme,
               isDestructive: true,
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () => Get.toNamed('/admin'),
-                icon: Icon(Icons.admin_panel_settings),
-                label: Text('Switch to Admin Panel'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.primaryColor,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                ),
-              ),
             ),
           ],
         ),

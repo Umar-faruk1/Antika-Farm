@@ -10,6 +10,7 @@ import '../../../components/custom_icon_button.dart';
 import '../../../components/dark_transition.dart';
 import '../../../components/product_item.dart';
 import '../controllers/home_controller.dart';
+import '../../auth/controllers/auth_controller.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
@@ -43,10 +44,12 @@ class HomeView extends GetView<HomeController> {
                           fontSize: 12.sp
                         ),
                       ),
-                      subtitle: Text(
-                        'Umar Faruk',
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.normal,
+                      subtitle: GetBuilder<AuthController>(
+                        builder: (authController) => Text(
+                          authController.currentUser?.name ?? '',
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.normal,
+                          ),
                         ),
                       ),
                       leading: CircleAvatar(
