@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../components/product_item.dart';
-import '../../../../utils/dummy_helper.dart';
 import '../controllers/category_controller.dart';
 
 class CategoryView extends GetView<CategoryController> {
@@ -43,7 +42,7 @@ class CategoryView extends GetView<CategoryController> {
                     value: controller.selectedCategory.value.isNotEmpty ? controller.selectedCategory.value : null,
                     items: [
                       DropdownMenuItem(value: '', child: Text('All Categories')),
-                      ...controller.categories.map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
+                      ...controller.categories.map((cat) => DropdownMenuItem(value: cat.id, child: Text(cat.title)))
                     ],
                     onChanged: controller.onCategoryChanged,
                     decoration: InputDecoration(

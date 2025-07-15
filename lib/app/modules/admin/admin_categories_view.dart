@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../utils/dummy_helper.dart';
+import '../../data/category_service.dart';
 import '../../data/models/category_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -13,9 +13,20 @@ class AdminCategoriesView extends StatefulWidget {
 }
 
 class _AdminCategoriesViewState extends State<AdminCategoriesView> {
-  List<CategoryModel> _categories = List<CategoryModel>.from(DummyHelper.categories);
-  
-  List<CategoryModel> get categories => _categories;
+  List<CategoryModel> _categories = [];
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCategories();
+  }
+
+  Future<void> _fetchCategories() async {
+    setState(() => _loading = true);
+    _categories = await CategoryService.fetchCategories();
+    setState(() => _loading = false);
+  }
 
   void _showCategoryDialog({CategoryModel? initial, int? editIndex}) {
     final titleController = TextEditingController(text: initial?.title ?? '');
@@ -27,7 +38,7 @@ class _AdminCategoriesViewState extends State<AdminCategoriesView> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: Text(editIndex == null ? 'Add Category' : 'Edit Category'),
+          title: Text(initial == null ? 'Add Category' : 'Edit Category'),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -85,28 +96,27 @@ class _AdminCategoriesViewState extends State<AdminCategoriesView> {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 final title = titleController.text.trim();
                 if (title.isNotEmpty) {
-                  setState(() {
-                    if (editIndex == null) {
-                      _categories.add(CategoryModel(
-                        id: _categories.length + 1,
-                        title: title,
-                        image: selectedImagePath ?? 'assets/vectors/category.svg',
-                      ));
-                    } else {
-                      _categories[editIndex!] = CategoryModel(
-                        id: _categories[editIndex!].id,
-                        title: title,
-                        image: selectedImagePath ?? _categories[editIndex!].image,
-                      );
-                    }
-                  });
+                  if (initial == null) {
+                    await CategoryService.addCategory(CategoryModel(
+                      id: '', // Firestore will assign
+                      title: title,
+                      image: selectedImagePath ?? '',
+                    ));
+                  } else {
+                    await CategoryService.updateCategory(CategoryModel(
+                      id: initial.id,
+                      title: title,
+                      image: selectedImagePath ?? initial.image,
+                    ));
+                  }
+                  await _fetchCategories();
                   Navigator.pop(context);
                 }
               },
-              child: Text(editIndex == null ? 'Add' : 'Save'),
+              child: Text(initial == null ? 'Add' : 'Save'),
             ),
           ],
         ),
@@ -126,10 +136,9 @@ class _AdminCategoriesViewState extends State<AdminCategoriesView> {
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _categories.removeAt(index);
-              });
+            onPressed: () async {
+              await CategoryService.deleteCategory(_categories[index].id);
+              await _fetchCategories();
               Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
@@ -150,64 +159,68 @@ class _AdminCategoriesViewState extends State<AdminCategoriesView> {
       ),
       body: Padding(
         padding: EdgeInsets.all(24.w),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView.separated(
-                itemCount: _categories.length,
-                separatorBuilder: (_, __) => SizedBox(height: 16.h),
-                itemBuilder: (context, index) {
-                  final category = _categories[index];
-                  return Container(
-                    padding: EdgeInsets.all(16.w),
-                    decoration: BoxDecoration(
-                      color: theme.cardColor,
-                      borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(color: theme.dividerColor),
+        child: _loading
+            ? Center(child: CircularProgressIndicator())
+            : Column(
+                children: [
+                  Expanded(
+                    child: ListView.separated(
+                      itemCount: _categories.length,
+                      separatorBuilder: (_, __) => SizedBox(height: 16.h),
+                      itemBuilder: (context, index) {
+                        final category = _categories[index];
+                        return Container(
+                          padding: EdgeInsets.all(16.w),
+                          decoration: BoxDecoration(
+                            color: theme.cardColor,
+                            borderRadius: BorderRadius.circular(12.r),
+                            border: Border.all(color: theme.dividerColor),
+                          ),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                backgroundColor: theme.primaryColor.withOpacity(0.1),
+                                child: category.image.isNotEmpty
+                                    ? Image.network(category.image, width: 32.w, height: 32.w, fit: BoxFit.contain)
+                                    : Icon(Icons.image, size: 32.w),
+                              ),
+                              16.horizontalSpace,
+                              Expanded(
+                                child: Text(category.title, style: theme.textTheme.titleMedium),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.edit, color: theme.primaryColor),
+                                onPressed: () => _showCategoryDialog(initial: category, editIndex: index),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete, color: Colors.red),
+                                onPressed: () => _deleteCategory(index),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: theme.primaryColor.withOpacity(0.1),
-                          child: Image.asset(category.image, width: 32.w, height: 32.w, fit: BoxFit.contain),
-                        ),
-                        16.horizontalSpace,
-                        Expanded(
-                          child: Text(category.title, style: theme.textTheme.titleMedium),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.edit, color: theme.primaryColor),
-                          onPressed: () => _showCategoryDialog(initial: category, editIndex: index),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _deleteCategory(index),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-            24.verticalSpace,
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () => _showCategoryDialog(),
-                icon: Icon(Icons.add),
-                label: Text('Add Category'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.primaryColor,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
                   ),
-                ),
+                  24.verticalSpace,
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () => _showCategoryDialog(),
+                      icon: Icon(Icons.add),
+                      label: Text('Add Category'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.primaryColor,
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }

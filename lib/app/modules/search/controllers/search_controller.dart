@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../data/models/product_model.dart';
 import '../../../../utils/dummy_helper.dart';
+import '../../../data/product_service.dart';
 
 class SearchController extends GetxController {
   final searchController = TextEditingController();
@@ -10,19 +11,26 @@ class SearchController extends GetxController {
   final isLoading = false.obs;
   final selectedFilters = <String>[].obs;
   final filteredProducts = <ProductModel>[].obs;
+  List<ProductModel> allProducts = [];
 
   @override
   void onInit() {
     super.onInit();
-    // Initialize with all products
-    filteredProducts.value = DummyHelper.products;
+    fetchProducts();
+  }
+
+  Future<void> fetchProducts() async {
+    isLoading.value = true;
+    allProducts = await ProductService.fetchProducts();
+    filteredProducts.value = allProducts;
+    isLoading.value = false;
   }
 
   void onSearchChanged(String query) {
     if (query.isEmpty) {
-      filteredProducts.value = DummyHelper.products;
+      filteredProducts.value = allProducts;
     } else {
-      final results = DummyHelper.products.where((product) =>
+      final results = allProducts.where((product) =>
         product.name.toLowerCase().contains(query.toLowerCase()) ||
         product.description.toLowerCase().contains(query.toLowerCase())
       ).toList();
@@ -32,7 +40,7 @@ class SearchController extends GetxController {
 
   void clearSearch() {
     searchController.clear();
-    filteredProducts.value = DummyHelper.products;
+    filteredProducts.value = allProducts;
   }
 
   void showFilterDialog() {

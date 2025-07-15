@@ -43,10 +43,11 @@ class ProductItem extends StatelessWidget {
               top: 22.h,
               left: 26.w,
               right: 25.w,
-              child: Image.asset(product.image).animate().slideX(
-                duration: 200.ms,
-                begin: 1, curve: Curves.easeInSine,
-              ),
+              child: (product.image.isEmpty)
+                  ? Image.asset('assets/images/placeholder.jpg', width: 80.w, height: 80.w, fit: BoxFit.contain)
+                  : (product.image.startsWith('assets/')
+                      ? Image.asset(product.image, width: 80.w, height: 80.w, fit: BoxFit.contain)
+                      : Image.network(product.image, width: 80.w, height: 80.w, fit: BoxFit.contain)),
             ),
             Positioned(
               left: 16.w,

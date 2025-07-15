@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-import '../../../../utils/dummy_helper.dart';
+import '../../../data/product_service.dart';
 import '../../../data/models/product_model.dart';
 import '../../../data/models/category_model.dart';
 
@@ -19,16 +19,15 @@ class ProductsController extends GetxController {
     }
   }
 
-  void setCategory(CategoryModel cat) {
+  Future<void> setCategory(CategoryModel cat) async {
     category = cat;
-    products = DummyHelper.products
-        .where((p) => p.categoryId == cat.id)
-        .toList();
+    final allProducts = await ProductService.fetchProducts();
+    products = allProducts.where((p) => p.categoryId == cat.id).toList();
     update();
   }
 
-  void getProducts() {
-    products = List<ProductModel>.from(DummyHelper.products);
+  Future<void> getProducts() async {
+    products = await ProductService.fetchProducts();
     update();
   }
 }

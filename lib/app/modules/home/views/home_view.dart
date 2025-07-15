@@ -147,22 +147,29 @@ class HomeView extends GetView<HomeController> {
                         ],
                       ),
                       16.verticalSpace,
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: controller.categories.map((category) {
-                            return Padding(
-                              padding: EdgeInsets.only(right: 16.w),
-                              child: CategoryItem(
-                                category: category,
-                                onTap: () => Get.toNamed(
-                                  '/products',
-                                  arguments: category,
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
+                      GetBuilder<HomeController>(
+                        builder: (controller) {
+                          if (controller.categories.isEmpty) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                          return SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: controller.categories.map((category) {
+                                return Padding(
+                                  padding: EdgeInsets.only(right: 16.w),
+                                  child: CategoryItem(
+                                    category: category,
+                                    onTap: () => Get.toNamed(
+                                      '/products',
+                                      arguments: category,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          );
+                        },
                       ),
                       20.verticalSpace,
                       Row(
@@ -182,19 +189,26 @@ class HomeView extends GetView<HomeController> {
                         ],
                       ),
                       16.verticalSpace,
-                      GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 16.w,
-                          mainAxisSpacing: 16.h,
-                          mainAxisExtent: 214.h,
-                        ),
-                        shrinkWrap: true,
-                        primary: false,
-                        itemCount: 2,
-                        itemBuilder: (context, index) => ProductItem(
-                          product: controller.products[index],
-                        ),
+                      GetBuilder<HomeController>(
+                        builder: (controller) {
+                          if (controller.products.isEmpty) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                          return GridView.builder(
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 16.w,
+                              mainAxisSpacing: 16.h,
+                              mainAxisExtent: 214.h,
+                            ),
+                            shrinkWrap: true,
+                            primary: false,
+                            itemCount: controller.products.length,
+                            itemBuilder: (context, index) => ProductItem(
+                              product: controller.products[index],
+                            ),
+                          );
+                        },
                       ),
                       20.verticalSpace,
                     ],

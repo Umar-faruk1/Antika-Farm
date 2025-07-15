@@ -6,6 +6,8 @@ import '../../../../utils/dummy_helper.dart';
 import '../../../data/local/my_shared_pref.dart';
 import '../../../data/models/category_model.dart';
 import '../../../data/models/product_model.dart';
+import '../../../data/category_service.dart';
+import '../../../data/product_service.dart';
 
 class HomeController extends GetxController {
 
@@ -26,14 +28,16 @@ class HomeController extends GetxController {
     super.onInit();
   }
 
-  /// get categories from dummy helper
-  getCategories() {
-    categories = DummyHelper.categories;
+  /// get categories from Firestore
+  Future<void> getCategories() async {
+    categories = await CategoryService.fetchCategories();
+    update();
   }
 
-  /// get products from dummy helper
-  getProducts() {
-    products = DummyHelper.products;
+  /// get products from Firestore
+  Future<void> getProducts() async {
+    products = await ProductService.fetchProducts();
+    update();
   }
 
   /// when the user press on change theme icon
