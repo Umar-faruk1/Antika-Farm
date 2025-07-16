@@ -11,6 +11,7 @@ import '../../../components/dark_transition.dart';
 import '../../../components/product_item.dart';
 import '../controllers/home_controller.dart';
 import '../../auth/controllers/auth_controller.dart';
+import '../../products/controllers/products_controller.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
@@ -160,10 +161,10 @@ class HomeView extends GetView<HomeController> {
                                   padding: EdgeInsets.only(right: 16.w),
                                   child: CategoryItem(
                                     category: category,
-                                    onTap: () => Get.toNamed(
-                                      '/products',
-                                      arguments: category,
-                                    ),
+                                    onTap: () {
+                                      Get.delete<ProductsController>(force: true);
+                                      Get.toNamed('/products', arguments: category);
+                                    },
                                   ),
                                 );
                               }).toList(),

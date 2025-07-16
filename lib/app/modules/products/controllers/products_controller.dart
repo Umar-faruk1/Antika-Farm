@@ -5,29 +5,31 @@ import '../../../data/models/product_model.dart';
 import '../../../data/models/category_model.dart';
 
 class ProductsController extends GetxController {
-  List<ProductModel> products = [];
-  CategoryModel? category;
+  final RxList<ProductModel> products = <ProductModel>[].obs;
+  final Rxn<CategoryModel> category = Rxn<CategoryModel>();
 
   @override
   void onInit() {
     super.onInit();
-    // If a category is passed as argument, filter products
+    _loadProductsFromArgs();
+    ever(category, (_) => _loadProductsFromArgs());
+  }
+
+  void _loadProductsFromArgs() async {
     if (Get.arguments != null && Get.arguments is CategoryModel) {
-      setCategory(Get.arguments as CategoryModel);
+      await setCategory(Get.arguments as CategoryModel);
     } else {
-      getProducts();
+      await getProducts();
     }
   }
 
   Future<void> setCategory(CategoryModel cat) async {
-    category = cat;
+    category.value = cat;
     final allProducts = await ProductService.fetchProducts();
-    products = allProducts.where((p) => p.categoryId == cat.id).toList();
-    update();
+    products.value = allProducts.where((p) => p.categoryId == cat.id).toList();
   }
 
   Future<void> getProducts() async {
-    products = await ProductService.fetchProducts();
-    update();
+    products.value = await ProductService.fetchProducts();
   }
 }

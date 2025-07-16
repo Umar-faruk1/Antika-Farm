@@ -25,9 +25,21 @@ class CategoryItem extends StatelessWidget {
           CircleAvatar(
             radius: 37.r,
             backgroundColor: theme.cardColor,
-            child: (category.image.isEmpty)
-                ? Image.asset('assets/images/placeholder.jpg', width: 48.w, height: 48.w, fit: BoxFit.contain)
-                : SvgPicture.asset(category.image),
+            child: category.image.isNotEmpty
+                ? Image.network(
+                    category.image,
+                    width: 48.w,
+                    height: 48.w,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => Icon(Icons.broken_image, size: 32.w),
+                  )
+                : Image.network(
+                    'https://via.placeholder.com/150',
+                    width: 48.w,
+                    height: 48.w,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => Icon(Icons.broken_image, size: 32.w),
+                  ),
           ).animate().fade(duration: 200.ms),
           10.verticalSpace,
           Text(category.title, style: theme.textTheme.titleLarge)

@@ -7,6 +7,8 @@ import 'app/data/local/my_shared_pref.dart';
 import 'app/routes/app_pages.dart';
 import 'config/theme/my_theme.dart';
 import 'config/translations/localization_service.dart';
+import 'app/modules/cart/controllers/cart_controller.dart';
+import 'app/modules/profile/controllers/profile_controller.dart';
 
 Future<void> main() async {
   // wait for bindings
@@ -15,6 +17,11 @@ Future<void> main() async {
 
   // init shared preference
   await MySharedPref.init();
+
+  // Register CartController globally
+  Get.put(CartController(), permanent: true);
+  // Register ProfileController globally
+  Get.put(ProfileController(), permanent: true);
 
   runApp(
     ScreenUtilInit(

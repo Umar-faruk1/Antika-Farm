@@ -11,52 +11,81 @@ class PaymentMethodsView extends StatefulWidget {
 }
 
 class _PaymentMethodsViewState extends State<PaymentMethodsView> {
-  final ProfileController profileController = Get.isRegistered<ProfileController>()
-      ? Get.find<ProfileController>()
-      : Get.put(ProfileController());
+  final ProfileController profileController = Get.find<ProfileController>();
 
   void _showPaymentDialog({Map<String, String>? initial, int? editIndex}) {
     final typeController = TextEditingController(text: initial?['type'] ?? '');
     final detailsController = TextEditingController(text: initial?['details'] ?? '');
+    String selectedType = initial?['type'] ?? '';
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(editIndex == null ? 'Add Payment Method' : 'Edit Payment Method'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: typeController,
-              decoration: const InputDecoration(hintText: 'Type (e.g. Credit Card, PayPal)'),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text(editIndex == null ? 'Add Payment Method' : 'Edit Payment Method'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButtonFormField<String>(
+                value: selectedType.isNotEmpty ? selectedType : null,
+                items: [
+                  DropdownMenuItem(value: 'Credit Card', child: Text('Credit Card')),
+                  DropdownMenuItem(value: 'PayPal', child: Text('PayPal')),
+                  DropdownMenuItem(value: 'Momo', child: Text('Momo')),
+                ],
+                onChanged: (val) {
+                  setState(() {
+                    selectedType = val ?? '';
+                    typeController.text = selectedType;
+                    detailsController.text = '';
+                  });
+                },
+                decoration: const InputDecoration(hintText: 'Type'),
+              ),
+              16.verticalSpace,
+              if (selectedType == 'Credit Card')
+                TextField(
+                  controller: detailsController,
+                  decoration: const InputDecoration(hintText: 'Card Number (e.g. **** **** **** 1234)'),
+                )
+              else if (selectedType == 'PayPal')
+                TextField(
+                  controller: detailsController,
+                  decoration: const InputDecoration(hintText: 'PayPal Email'),
+                )
+              else if (selectedType == 'Momo')
+                TextField(
+                  controller: detailsController,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(hintText: 'Momo Phone Number'),
+                ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
             ),
-            16.verticalSpace,
-            TextField(
-              controller: detailsController,
-              decoration: const InputDecoration(hintText: 'Details (e.g. **** **** **** 1234)'),
+            ElevatedButton(
+              onPressed: () {
+                final type = typeController.text.trim();
+                final details = detailsController.text.trim();
+                if (type.isNotEmpty && details.isNotEmpty) {
+                  if (type == 'Momo' && !RegExp(r'^\+?\d{9,15}\$').hasMatch(details)) {
+                    Get.snackbar('Invalid', 'Enter a valid phone number for Momo');
+                    return;
+                  }
+                  if (editIndex == null) {
+                    profileController.paymentMethods.add({'type': type, 'details': details});
+                  } else {
+                    profileController.paymentMethods[editIndex!] = {'type': type, 'details': details};
+                  }
+                  Navigator.pop(context);
+                }
+              },
+              child: Text(editIndex == null ? 'Add' : 'Save'),
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final type = typeController.text.trim();
-              final details = detailsController.text.trim();
-              if (type.isNotEmpty && details.isNotEmpty) {
-                if (editIndex == null) {
-                  profileController.paymentMethods.add({'type': type, 'details': details});
-                } else {
-                  profileController.paymentMethods[editIndex!] = {'type': type, 'details': details};
-                }
-                Navigator.pop(context);
-              }
-            },
-            child: Text(editIndex == null ? 'Add' : 'Save'),
-          ),
-        ],
       ),
     );
   }
@@ -104,6 +133,16 @@ class _PaymentMethodsViewState extends State<PaymentMethodsView> {
                 separatorBuilder: (_, __) => SizedBox(height: 16.h),
                 itemBuilder: (context, index) {
                   final method = profileController.paymentMethods[index];
+                  Widget iconWidget;
+                  if (method['type'] == 'Credit Card') {
+                    iconWidget = Image.asset('assets/images/card1.png', width: 32, height: 22);
+                  } else if (method['type'] == 'Momo') {
+                    iconWidget = Icon(Icons.phone_android, color: theme.primaryColor, size: 28);
+                  } else if (method['type'] == 'PayPal') {
+                    iconWidget = Icon(Icons.account_balance_wallet, color: theme.primaryColor, size: 28);
+                  } else {
+                    iconWidget = Icon(Icons.payment, color: theme.primaryColor, size: 28);
+                  }
                   return Container(
                     padding: EdgeInsets.all(16.w),
                     decoration: BoxDecoration(
@@ -113,7 +152,7 @@ class _PaymentMethodsViewState extends State<PaymentMethodsView> {
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.payment, color: theme.primaryColor),
+                        iconWidget,
                         16.horizontalSpace,
                         Expanded(
                           child: Column(

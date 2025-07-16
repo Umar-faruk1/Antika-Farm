@@ -8,14 +8,15 @@ import '../../../../utils/constants.dart';
 import '../../../components/custom_button.dart';
 import '../../../components/custom_icon_button.dart';
 import '../../../components/no_data.dart';
-import '../controllers/cart_controller.dart';
+import '../controllers/cart_controller.dart' as cart;
 import 'widgets/cart_item.dart';
 
-class CartView extends GetView<CartController> {
+class CartView extends GetView<cart.CartController> {
   const CartView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final cartController = Get.find<cart.CartController>();
     final theme = context.theme;
     return Scaffold(
       appBar: AppBar(
@@ -44,21 +45,22 @@ class CartView extends GetView<CartController> {
           ),
         ),
       ),
-      body: GetBuilder<CartController>(
-        builder: (_) => Column(
+      body: Obx(() {
+        final items = cartController.cartItems.where((item) => item.quantity > 0).toList();
+        return Column(
           children: [
             24.verticalSpace,
             Expanded(
-              child: controller.products.isEmpty
+              child: items.isEmpty
                 ? const NoData(text: 'No Products in Your Cart Yet!')
                 : ListView.separated(
                     separatorBuilder: (_, index) => Padding(
                       padding: EdgeInsets.only(top: 12.h, bottom: 24.h),
                       child: const Divider(thickness: 1),
                     ),
-                    itemCount: controller.products.length,
+                    itemCount: items.length,
                     itemBuilder: (context, index) => CartItem(
-                      product: controller.products[index],
+                      cartItem: items[index],
                     ).animate(delay: (100 * index).ms).fade().slideX(
                       duration: 300.ms,
                       begin: -1,
@@ -68,12 +70,12 @@ class CartView extends GetView<CartController> {
             ),
             30.verticalSpace,
             Visibility(
-              visible: controller.products.isNotEmpty,
+              visible: cartController.cartItems.isNotEmpty,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
                 child: CustomButton(
                   text: 'Purchase Now',
-                  onPressed: () => controller.onPurchaseNowPressed(),
+                  onPressed: () => cartController.onPurchaseNowPressed(),
                   fontSize: 16.sp,
                   radius: 50.r,
                   verticalPadding: 16.h,
@@ -87,8 +89,8 @@ class CartView extends GetView<CartController> {
             ),
             30.verticalSpace,
           ],
-        ),
-      ),
+        );
+      }),
     );
   }
 }

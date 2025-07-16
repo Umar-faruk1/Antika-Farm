@@ -11,9 +11,7 @@ class AddressesView extends StatefulWidget {
 }
 
 class _AddressesViewState extends State<AddressesView> {
-  final ProfileController profileController = Get.isRegistered<ProfileController>()
-      ? Get.find<ProfileController>()
-      : Get.put(ProfileController());
+  final ProfileController profileController = Get.find<ProfileController>();
 
   void _showAddressDialog({String? initial, int? editIndex}) {
     final controller = TextEditingController(text: initial ?? '');

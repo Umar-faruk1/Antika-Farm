@@ -4,24 +4,31 @@ import 'package:get/get.dart';
 
 import '../../../../components/product_count_item.dart';
 import '../../../../data/models/product_model.dart';
-import '../../controllers/cart_controller.dart';
+import '../../controllers/cart_controller.dart' as cart;
 
-class CartItem extends GetView<CartController> {
-  final ProductModel product;
+class CartItem extends StatelessWidget {
+  final cart.CartItem cartItem;
   const CartItem({
     Key? key,
-    required this.product,
+    required this.cartItem,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
+    final product = cartItem.product;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.asset(product.image, width: 50.w, height: 40.h),
+          Image.network(
+            product.image.isNotEmpty ? product.image : 'https://via.placeholder.com/150',
+            width: 50.w,
+            height: 40.h,
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) => Icon(Icons.broken_image, size: 40.w),
+          ),
           16.horizontalSpace,
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,7 +36,7 @@ class CartItem extends GetView<CartController> {
               Text(product.name, style: theme.textTheme.headlineSmall),
               5.verticalSpace,
               Text(
-                '1kg, ${product.price}\$',
+                '1kg, 24${product.price}',
                 style: theme.textTheme.headlineSmall?.copyWith(
                   color: theme.colorScheme.secondary,
                 ),

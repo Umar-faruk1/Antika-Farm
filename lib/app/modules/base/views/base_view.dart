@@ -11,6 +11,7 @@ import '../../category/views/category_view.dart';
 import '../../profile/views/profile_view.dart';
 import '../controllers/base_controller.dart';
 import '../../home/views/home_view.dart';
+import '../../cart/controllers/cart_controller.dart';
 
 class BaseView extends GetView<BaseController> {
   const BaseView({Key? key}) : super(key: key);
@@ -71,12 +72,12 @@ class BaseView extends GetView<BaseController> {
           elevation: 0.0,
           backgroundColor: Colors.transparent,
           onPressed:() => Get.toNamed(Routes.CART),
-          child: GetBuilder<BaseController>(
-            id: 'CartBadge',
-            builder: (_) => badges.Badge(
+          child: Obx(() {
+            final cartCount = Get.find<CartController>().totalItems;
+            return badges.Badge(
               position: badges.BadgePosition.bottomEnd(bottom: -16, end: 13),
               badgeContent: Text(
-                controller.cartItemsCount.toString(),
+                cartCount.toString(),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -94,8 +95,8 @@ class BaseView extends GetView<BaseController> {
                   Constants.cartIcon, fit: BoxFit.none,
                 ),
               ),
-            ),
-          ),
+            );
+          }),
         ),
       ),
     );

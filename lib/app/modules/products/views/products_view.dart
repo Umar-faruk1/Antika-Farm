@@ -32,12 +32,12 @@ class ProductsView extends GetView<ProductsController> {
                   color: theme.appBarTheme.iconTheme?.color,
                 ),
               ),
-              Text(
-                controller.category != null
-                    ? controller.category!.title + ' 🛒'
+              Obx(() => Text(
+                controller.category.value != null
+                    ? controller.category.value!.title + ' 🛒'
                     : 'Products',
                 style: theme.textTheme.displaySmall,
-              ),
+              )),
               CustomIconButton(
                 onPressed: () {},
                 backgroundColor: theme.scaffoldBackgroundColor,
@@ -54,7 +54,7 @@ class ProductsView extends GetView<ProductsController> {
       ),
       body: Padding(
         padding: EdgeInsets.fromLTRB(24.w, 24.h, 24.w, 0),
-        child: GridView.builder(
+        child: Obx(() => GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 16.w,
@@ -67,7 +67,7 @@ class ProductsView extends GetView<ProductsController> {
           itemBuilder: (context, index) => ProductItem(
             product: controller.products[index],
           ),
-        ),
+        )),
       ),
     );
   }

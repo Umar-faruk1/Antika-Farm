@@ -9,11 +9,11 @@ class CustomSnackBar {
       duration: duration ?? const Duration(seconds: 3),
       margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
       colorText: Colors.white,
-      backgroundColor: const Color(0xFF3A3A3A),
-      icon: const Icon(Icons.check, color: Colors.greenAccent),
+      backgroundColor: Colors.green,
+      icon: const Icon(Icons.check, color: Colors.white),
+      snackPosition: SnackPosition.TOP,
     );
   }
-
 
   static showCustomErrorSnackBar({required String title, required String message, Color? color, Duration? duration}) {
     Get.snackbar(
@@ -22,39 +22,33 @@ class CustomSnackBar {
       duration: duration ?? const Duration(seconds: 3),
       margin: const EdgeInsets.only(top: 10,left: 10,right: 10),
       colorText: Colors.white,
-      backgroundColor: color ?? Colors.redAccent,
+      backgroundColor: color ?? Colors.red,
       icon: const Icon(Icons.error, color: Colors.white,),
+      snackPosition: SnackPosition.TOP,
     );
   }
-
-
 
   static showCustomToast({String? title, required String message, Color? color, Duration? duration}) {
-    Get.rawSnackbar(
-      title: title,
+    Get.snackbar(
+      title ?? '',
+      message,
       duration: duration ?? const Duration(seconds: 3),
-      snackStyle: SnackStyle.GROUNDED,
+      colorText: Colors.white,
       backgroundColor: color ?? Colors.green,
-      onTap: (snack){
-        Get.closeAllSnackbars();
-      },
-      //overlayBlur: 0.8,
-      message: message,
+      margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
+      snackPosition: SnackPosition.TOP,
     );
   }
 
-
   static showCustomErrorToast({String? title, required String message, Color? color,Duration? duration}) {
-    Get.rawSnackbar(
-      title: title,
+    Get.snackbar(
+      title ?? '',
+      message,
       duration: duration ?? const Duration(seconds: 3),
-      snackStyle: SnackStyle.GROUNDED,
-      backgroundColor: color ?? Colors.redAccent,
-      onTap: (snack){
-        Get.closeAllSnackbars();
-      },
-      //overlayBlur: 0.8,
-      message: message,
+      colorText: Colors.white,
+      backgroundColor: color ?? Colors.red,
+      margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
+      snackPosition: SnackPosition.TOP,
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 
-import '../../../../utils/dummy_helper.dart';
 import '../../cart/controllers/cart_controller.dart';
 
 class BaseController extends GetxController {
@@ -13,7 +12,9 @@ class BaseController extends GetxController {
 
   @override
   void onInit() {
-    getCartItemsCount();
+    ever(Get.find<CartController>().cartItems, (_) => updateCartItemsCount());
+    updateCartItemsCount();
+    update(['cart_items_count']);
     super.onInit();
   }
 
@@ -21,33 +22,12 @@ class BaseController extends GetxController {
   changeScreen(int selectedIndex) {
     currentIndex = selectedIndex;
     update();
+    updateCartItemsCount();
   }
 
   /// calculate the number of products in the cart
-  getCartItemsCount() {
-    var products = DummyHelper.products;
-    cartItemsCount = products.fold<int>(0, (p, c) => p + c.quantity);
+  void updateCartItemsCount() {
+    cartItemsCount = Get.find<CartController>().totalItems;
     update(['CartBadge']);
   }
-
-  /// when the user press on add + icon
-  onIncreasePressed(String productId) {
-    DummyHelper.products.firstWhere((p) => p.id == productId).quantity++;
-    getCartItemsCount();
-    update(['ProductQuantity']);
-  }
-
-  /// when the user press on remove - icon
-  onDecreasePressed(String productId) {
-    var product = DummyHelper.products.firstWhere((p) => p.id == productId);
-    if (product.quantity > 0) {
-      product.quantity--;
-      getCartItemsCount();
-      if (Get.isRegistered<CartController>()) {
-        Get.find<CartController>().getCartProducts();
-      }
-      update(['ProductQuantity']);
-    }
-  }
-
 }

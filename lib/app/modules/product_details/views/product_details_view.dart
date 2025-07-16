@@ -63,10 +63,12 @@ class ProductDetailsView extends GetView<ProductDetailsController> {
                     top: 80.h,
                     left: 0,
                     right: 0,
-                    child: Image.asset(
-                      controller.product.image,
+                    child: Image.network(
+                      controller.product.image.isNotEmpty ? controller.product.image : 'https://via.placeholder.com/250',
                       width: 250.w,
                       height: 225.h,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) => Icon(Icons.broken_image, size: 120.w),
                     ).animate().fade().scale(
                       duration: 800.ms,
                       curve: Curves.fastOutSlowIn,

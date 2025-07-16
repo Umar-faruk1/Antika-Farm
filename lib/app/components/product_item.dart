@@ -43,11 +43,13 @@ class ProductItem extends StatelessWidget {
               top: 22.h,
               left: 26.w,
               right: 25.w,
-              child: (product.image.isEmpty)
-                  ? Image.asset('assets/images/placeholder.jpg', width: 80.w, height: 80.w, fit: BoxFit.contain)
-                  : (product.image.startsWith('assets/')
-                      ? Image.asset(product.image, width: 80.w, height: 80.w, fit: BoxFit.contain)
-                      : Image.network(product.image, width: 80.w, height: 80.w, fit: BoxFit.contain)),
+              child: Image.network(
+                product.image.isNotEmpty ? product.image : 'https://via.placeholder.com/150',
+                width: 80.w,
+                height: 80.w,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) => Icon(Icons.broken_image, size: 80.w),
+              ),
             ),
             Positioned(
               left: 16.w,
