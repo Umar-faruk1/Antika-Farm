@@ -1,3 +1,4 @@
+import 'package:antika_farm/app/components/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -17,6 +18,8 @@ class RegisterView extends GetView<AuthController> {
     final passwordController = TextEditingController();
     final confirmPasswordController = TextEditingController();
     final agreeTerms = false.obs;
+    final RxBool obscurePassword = true.obs;
+    final RxBool obscureConfirmPassword = true.obs;
 
     return Scaffold(
       body: Container(
@@ -121,28 +124,36 @@ class RegisterView extends GetView<AuthController> {
                         child: Text('Password', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500)),
                       ),
                       8.verticalSpace,
-                      CustomFormField(
+                      Obx(() => CustomFormField(
                         controller: passwordController,
                         hint: 'Create a password',
-                        obscureText: true,
+                        obscureText: obscurePassword.value,
                         prefixIcon: Icon(Icons.lock_outline, color: theme.primaryColor),
                         backgroundColor: Colors.grey[100],
                         borderRound: 12.r,
-                      ),
+                        suffixIcon: IconButton(
+                          icon: Icon(obscurePassword.value ? Icons.visibility_off : Icons.visibility, color: theme.primaryColor),
+                          onPressed: () => obscurePassword.value = !obscurePassword.value,
+                        ),
+                      )),
                       16.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text('Confirm Password', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500)),
                       ),
                       8.verticalSpace,
-                      CustomFormField(
+                      Obx(() => CustomFormField(
                         controller: confirmPasswordController,
                         hint: 'Confirm your password',
-                        obscureText: true,
+                        obscureText: obscureConfirmPassword.value,
                         prefixIcon: Icon(Icons.lock_outline, color: theme.primaryColor),
                         backgroundColor: Colors.grey[100],
                         borderRound: 12.r,
-                      ),
+                        suffixIcon: IconButton(
+                          icon: Icon(obscureConfirmPassword.value ? Icons.visibility_off : Icons.visibility, color: theme.primaryColor),
+                          onPressed: () => obscureConfirmPassword.value = !obscureConfirmPassword.value,
+                        ),
+                      )),
                       16.verticalSpace,
                       Row(
                         children: [
@@ -180,7 +191,7 @@ class RegisterView extends GetView<AuthController> {
                               ? null
                               : () {
                                   if (passwordController.text != confirmPasswordController.text) {
-                                    Get.snackbar('Error', 'Passwords do not match');
+                                    CustomSnackBar.showCustomErrorSnackBar(title: 'Error', message: 'Passwords do not match');
                                     return;
                                   }
                                   controller.register(nameController.text, emailController.text, passwordController.text);

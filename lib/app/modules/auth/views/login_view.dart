@@ -14,6 +14,7 @@ class LoginView extends GetView<AuthController> {
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
     final rememberMe = false.obs;
+    final RxBool obscurePassword = true.obs;
 
     return Scaffold(
       body: Container(
@@ -90,14 +91,18 @@ class LoginView extends GetView<AuthController> {
                         child: Text('Password', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500)),
                       ),
                       8.verticalSpace,
-                      CustomFormField(
+                      Obx(() => CustomFormField(
                         controller: passwordController,
                         hint: 'Enter your password',
-                        obscureText: true,
+                        obscureText: obscurePassword.value,
                         prefixIcon: Icon(Icons.lock_outline, color: theme.primaryColor),
                         backgroundColor: Colors.grey[100],
                         borderRound: 12.r,
-                      ),
+                        suffixIcon: IconButton(
+                          icon: Icon(obscurePassword.value ? Icons.visibility_off : Icons.visibility, color: theme.primaryColor),
+                          onPressed: () => obscurePassword.value = !obscurePassword.value,
+                        ),
+                      )),
                       12.verticalSpace,
                       Row(
                         children: [

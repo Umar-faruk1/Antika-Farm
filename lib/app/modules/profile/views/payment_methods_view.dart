@@ -1,3 +1,4 @@
+import 'package:antika_farm/app/components/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -71,7 +72,7 @@ class _PaymentMethodsViewState extends State<PaymentMethodsView> {
                 final details = detailsController.text.trim();
                 if (type.isNotEmpty && details.isNotEmpty) {
                   if (type == 'Momo' && !RegExp(r'^\+?\d{9,15}\$').hasMatch(details)) {
-                    Get.snackbar('Invalid', 'Enter a valid phone number for Momo');
+                    CustomSnackBar.showCustomErrorSnackBar(title: 'Invalid', message: 'Enter a valid phone number for Momo');
                     return;
                   }
                   if (editIndex == null) {

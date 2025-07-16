@@ -2,6 +2,7 @@ import 'package:antika_farm/app/data/models/user_model.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../../components/custom_snackbar.dart';
 
 
 class AuthController extends GetxController {
@@ -25,21 +26,23 @@ class AuthController extends GetxController {
       final credential = await _auth.signInWithEmailAndPassword(email: email, password: password);
       final userDoc = await _firestore.collection('users').doc(credential.user!.uid).get();
       if (!userDoc.exists) {
-        throw Exception('User data not found');
+        CustomSnackBar.showCustomErrorSnackBar(title: 'Error', message: 'User data not found');
+        return;
       }
       currentUser = UserModel.fromMap(userDoc.data()!);
       if (currentUser == null || currentUser!.status != 'active') {
-        // handle inactive or null user
+        CustomSnackBar.showCustomErrorSnackBar(title: 'Error', message: 'Account is not active');
         return;
       }
       setLoggedIn(true);
+      CustomSnackBar.showCustomSnackBar(title: 'Success', message: 'Login successful');
       if (currentUser != null && currentUser!.role == 'admin') {
         Get.offAllNamed('/admin');
       } else {
         Get.offAllNamed('/base');
       }
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      CustomSnackBar.showCustomErrorSnackBar(title: 'Error', message: 'Invalid email or password');
     } finally {
       setLoading(false);
     }

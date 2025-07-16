@@ -146,7 +146,7 @@ class CheckoutView extends GetView<CheckoutController> {
                                         : theme.dividerColor,
                                     width: selectedNormalized == normalizedType ? 4 : 1.2,
                                   ),
-                                  borderRadius: BorderRadius.circular(12.r),
+                          borderRadius: BorderRadius.circular(12.r),
                                 ),
                                 child: Column(
                                   children: [

@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import '../../../components/custom_snackbar.dart';
 
 import '../../cart/controllers/cart_controller.dart';
 import '../../profile/controllers/profile_controller.dart';
@@ -50,7 +51,7 @@ class CheckoutController extends GetxController {
 
   Future<void> processOrder() async {
     if (deliveryAddress.value.isEmpty) {
-      if (!_disposed) Get.snackbar('Error', 'Please enter delivery address');
+      if (!_disposed) CustomSnackBar.showCustomErrorSnackBar(title: 'Error', message: 'Please enter delivery address');
       return;
     }
 
@@ -66,7 +67,7 @@ class CheckoutController extends GetxController {
       // Navigate to order confirmation
       Get.offAllNamed('/order-confirmation');
     } catch (e) {
-      if (!_disposed) Get.snackbar('Error', 'Failed to process order');
+      if (!_disposed) CustomSnackBar.showCustomErrorSnackBar(title: 'Error', message: 'Failed to process order');
     } finally {
       if (!_disposed) isLoading.value = false;
     }
