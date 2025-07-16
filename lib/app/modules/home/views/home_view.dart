@@ -1,3 +1,4 @@
+import 'package:antika_farm/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -138,13 +139,13 @@ class HomeView extends GetView<HomeController> {
                             'Categories 😋',
                             style: theme.textTheme.headlineMedium,
                           ),
-                          Text(
-                            'See all',
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              color: theme.primaryColor,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
+                          // Text(
+                          //   'See all',
+                          //   style: theme.textTheme.titleLarge?.copyWith(
+                          //     color: theme.primaryColor,
+                          //     fontWeight: FontWeight.normal,
+                          //   ),
+                          // ),
                         ],
                       ),
                       16.verticalSpace,
@@ -180,11 +181,14 @@ class HomeView extends GetView<HomeController> {
                             'Best selling 🔥',
                             style: theme.textTheme.headlineMedium,
                           ),
-                          Text(
-                            'See all',
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              color: theme.primaryColor,
-                              fontWeight: FontWeight.normal,
+                          GestureDetector(
+                            onTap: () => Get.toNamed(Routes.CATEGORY),
+                            child: Text(
+                              'See all',
+                              style: theme.textTheme.titleLarge?.copyWith(
+                                color: theme.primaryColor,
+                                fontWeight: FontWeight.normal,
+                              ),
                             ),
                           ),
                         ],

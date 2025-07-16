@@ -85,7 +85,7 @@ class CalendarView extends GetView<CalendarController> {
                   ),
                   8.verticalSpace,
                   Text(
-                    'Total: \$${(order['total'] as num).toStringAsFixed(2)}',
+                    'Total: GHS${(order['total'] as num).toStringAsFixed(2)}',
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: theme.primaryColor,

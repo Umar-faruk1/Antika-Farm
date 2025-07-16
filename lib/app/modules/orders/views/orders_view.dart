@@ -118,7 +118,7 @@ class OrdersView extends GetView<OrdersController> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Total: \$${order.total.toStringAsFixed(2)}',
+                'Total: GHS${order.total.toStringAsFixed(2)}',
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: theme.primaryColor,

@@ -122,82 +122,81 @@ class _PaymentMethodsViewState extends State<PaymentMethodsView> {
         title: Text('Payment Methods', style: theme.textTheme.displaySmall),
         centerTitle: true,
       ),
-      body: Padding(
+      body: Obx(() => Padding(
         padding: EdgeInsets.all(24.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Obx(() => ListView.separated(
-                itemCount: profileController.paymentMethods.length,
-                separatorBuilder: (_, __) => SizedBox(height: 16.h),
-                itemBuilder: (context, index) {
-                  final method = profileController.paymentMethods[index];
-                  Widget iconWidget;
-                  if (method['type'] == 'Credit Card') {
-                    iconWidget = Image.asset('assets/images/card1.png', width: 32, height: 22);
-                  } else if (method['type'] == 'Momo') {
-                    iconWidget = Icon(Icons.phone_android, color: theme.primaryColor, size: 28);
-                  } else if (method['type'] == 'PayPal') {
-                    iconWidget = Icon(Icons.account_balance_wallet, color: theme.primaryColor, size: 28);
-                  } else {
-                    iconWidget = Icon(Icons.payment, color: theme.primaryColor, size: 28);
-                  }
-                  return Container(
-                    padding: EdgeInsets.all(16.w),
-                    decoration: BoxDecoration(
-                      color: theme.cardColor,
-                      borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(color: theme.dividerColor),
+        child: ListView.separated(
+          itemCount: profileController.paymentMethods.length + 1,
+          separatorBuilder: (_, __) => SizedBox(height: 16.h),
+          itemBuilder: (context, index) {
+            if (index < profileController.paymentMethods.length) {
+              final method = profileController.paymentMethods[index];
+              Widget iconWidget;
+              if (method['type'] == 'Credit Card') {
+                iconWidget = Image.asset('assets/images/card1.png', width: 32, height: 22);
+              } else if (method['type'] == 'Momo') {
+                iconWidget = Icon(Icons.phone_android, color: theme.primaryColor, size: 28);
+              } else if (method['type'] == 'PayPal') {
+                iconWidget = Icon(Icons.account_balance_wallet, color: theme.primaryColor, size: 28);
+              } else {
+                iconWidget = Icon(Icons.payment, color: theme.primaryColor, size: 28);
+              }
+              return Container(
+                padding: EdgeInsets.all(16.w),
+                decoration: BoxDecoration(
+                  color: theme.cardColor,
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: theme.dividerColor),
+                ),
+                child: Row(
+                  children: [
+                    iconWidget,
+                    16.horizontalSpace,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(method['type']!, style: theme.textTheme.titleMedium),
+                          4.verticalSpace,
+                          Text(method['details']!, style: theme.textTheme.bodySmall),
+                        ],
+                      ),
                     ),
-                    child: Row(
-                      children: [
-                        iconWidget,
-                        16.horizontalSpace,
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(method['type']!, style: theme.textTheme.titleMedium),
-                              4.verticalSpace,
-                              Text(method['details']!, style: theme.textTheme.bodySmall),
-                            ],
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.edit, color: theme.primaryColor),
-                          onPressed: () => _showPaymentDialog(initial: method, editIndex: index),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _deletePaymentMethod(index),
-                        ),
-                      ],
+                    IconButton(
+                      icon: Icon(Icons.edit, color: theme.primaryColor),
+                      onPressed: () => _showPaymentDialog(initial: method, editIndex: index),
                     ),
-                  );
-                },
-              )),
-            ),
-            24.verticalSpace,
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () => _showPaymentDialog(),
-                icon: Icon(Icons.add),
-                label: Text('Add Payment Method'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.primaryColor,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
+                    IconButton(
+                      icon: Icon(Icons.delete, color: Colors.red),
+                      onPressed: () => _deletePaymentMethod(index),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              // Add Payment Method button as footer
+              return Padding(
+                padding: EdgeInsets.only(top: 24.h),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () => _showPaymentDialog(),
+                    icon: Icon(Icons.add),
+                    label: Text('Add Payment Method'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.primaryColor,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 16.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ],
+              );
+            }
+          },
         ),
-      ),
+      )),
     );
   }
 } 

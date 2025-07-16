@@ -36,7 +36,7 @@ class CartItem extends StatelessWidget {
               Text(product.name, style: theme.textTheme.headlineSmall),
               5.verticalSpace,
               Text(
-                '1kg, 24${product.price}',
+                'GHS ${product.price}',
                 style: theme.textTheme.headlineSmall?.copyWith(
                   color: theme.colorScheme.secondary,
                 ),

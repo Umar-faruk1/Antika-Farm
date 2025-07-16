@@ -240,7 +240,7 @@ class _AdminProductsViewState extends State<AdminProductsView> {
                                     4.verticalSpace,
                                     Text('Category: ${product.categoryId}', style: theme.textTheme.bodySmall),
                                     4.verticalSpace,
-                                    Text('Price: \$${product.price.toStringAsFixed(2)}', style: theme.textTheme.bodySmall),
+                                    Text('Price: GHS${product.price.toStringAsFixed(2)}', style: theme.textTheme.bodySmall),
                                   ],
                                 ),
                               ),

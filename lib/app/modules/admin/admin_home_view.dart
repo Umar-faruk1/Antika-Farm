@@ -62,7 +62,7 @@ class AdminHomeView extends StatelessWidget {
                 _DashboardCard(title: 'Categories', value: categories.length.toString(), icon: Icons.category),
                 _DashboardCard(title: 'Users', value: users.length.toString(), icon: Icons.people),
                 _DashboardCard(title: 'Orders', value: orders.length.toString(), icon: Icons.receipt_long),
-                _DashboardCard(title: 'Total Revenue', value: '₦${totalSales.toStringAsFixed(2)}', icon: Icons.attach_money),
+                _DashboardCard(title: 'Total Revenue', value: 'GHS${totalSales.toStringAsFixed(2)}', icon: Icons.attach_money),
               ],
             ),
           ],

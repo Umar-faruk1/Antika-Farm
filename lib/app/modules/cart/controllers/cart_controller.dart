@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import '../../../data/models/product_model.dart';
+import '../../../routes/app_pages.dart';
 
 class CartItem {
   final ProductModel product;
@@ -61,7 +62,13 @@ class CartController extends GetxController {
   // Get only items with quantity > 0
   List<CartItem> get nonEmptyCartItems => cartItems.where((item) => item.quantity > 0).toList();
 
+  bool _isNavigating = false;
+
   void onPurchaseNowPressed() {
-    Get.toNamed('/checkout');
+    if (_isNavigating) return;
+    _isNavigating = true;
+    Get.toNamed(Routes.CHECKOUT)?.then((_) {
+      _isNavigating = false;
+    });
   }
 }

@@ -82,65 +82,64 @@ class _AddressesViewState extends State<AddressesView> {
         title: Text('Addresses', style: theme.textTheme.displaySmall),
         centerTitle: true,
       ),
-      body: Padding(
+      body: Obx(() => Padding(
         padding: EdgeInsets.all(24.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Obx(() => ListView.separated(
-                itemCount: profileController.addresses.length,
-                separatorBuilder: (_, __) => SizedBox(height: 16.h),
-                itemBuilder: (context, index) {
-                  final address = profileController.addresses[index];
-                  return Container(
-                    padding: EdgeInsets.all(16.w),
-                    decoration: BoxDecoration(
-                      color: theme.cardColor,
-                      borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(color: theme.dividerColor),
+        child: ListView.separated(
+          itemCount: profileController.addresses.length + 1,
+          separatorBuilder: (_, __) => SizedBox(height: 16.h),
+          itemBuilder: (context, index) {
+            if (index < profileController.addresses.length) {
+              final address = profileController.addresses[index];
+              return Container(
+                padding: EdgeInsets.all(16.w),
+                decoration: BoxDecoration(
+                  color: theme.cardColor,
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: theme.dividerColor),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.location_on, color: theme.primaryColor),
+                    16.horizontalSpace,
+                    Expanded(
+                      child: Text(address, style: theme.textTheme.bodyLarge),
                     ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.location_on, color: theme.primaryColor),
-                        16.horizontalSpace,
-                        Expanded(
-                          child: Text(address, style: theme.textTheme.bodyLarge),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.edit, color: theme.primaryColor),
-                          onPressed: () => _showAddressDialog(initial: address, editIndex: index),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _deleteAddress(index),
-                        ),
-                      ],
+                    IconButton(
+                      icon: Icon(Icons.edit, color: theme.primaryColor),
+                      onPressed: () => _showAddressDialog(initial: address, editIndex: index),
                     ),
-                  );
-                },
-              )),
-            ),
-            24.verticalSpace,
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () => _showAddressDialog(),
-                icon: Icon(Icons.add),
-                label: Text('Add Address'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.primaryColor,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
+                    IconButton(
+                      icon: Icon(Icons.delete, color: Colors.red),
+                      onPressed: () => _deleteAddress(index),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              // Add Address button as footer
+              return Padding(
+                padding: EdgeInsets.only(top: 24.h),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () => _showAddressDialog(),
+                    icon: Icon(Icons.add),
+                    label: Text('Add Address'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.primaryColor,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 16.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ],
+              );
+            }
+          },
         ),
-      ),
+      )),
     );
   }
 } 

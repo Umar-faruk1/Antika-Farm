@@ -9,6 +9,7 @@ import 'config/theme/my_theme.dart';
 import 'config/translations/localization_service.dart';
 import 'app/modules/cart/controllers/cart_controller.dart';
 import 'app/modules/profile/controllers/profile_controller.dart';
+import 'app/modules/auth/controllers/auth_controller.dart';
 
 Future<void> main() async {
   // wait for bindings
@@ -22,6 +23,8 @@ Future<void> main() async {
   Get.put(CartController(), permanent: true);
   // Register ProfileController globally
   Get.put(ProfileController(), permanent: true);
+  // Register AuthController globally
+  Get.put(AuthController(), permanent: true);
 
   runApp(
     ScreenUtilInit(

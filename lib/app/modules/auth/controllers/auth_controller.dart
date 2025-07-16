@@ -28,11 +28,12 @@ class AuthController extends GetxController {
         throw Exception('User data not found');
       }
       currentUser = UserModel.fromMap(userDoc.data()!);
-      if (currentUser!.status != 'active') {
-        throw Exception('Account is not active');
+      if (currentUser == null || currentUser!.status != 'active') {
+        // handle inactive or null user
+        return;
       }
       setLoggedIn(true);
-      if (currentUser!.role == 'admin') {
+      if (currentUser != null && currentUser!.role == 'admin') {
         Get.offAllNamed('/admin');
       } else {
         Get.offAllNamed('/base');
@@ -61,7 +62,7 @@ class AuthController extends GetxController {
       await _firestore.collection('users').doc(credential.user!.uid).set(userModel.toMap());
       currentUser = userModel;
       setLoggedIn(true);
-      if (currentUser!.role == 'admin') {
+      if (currentUser != null && currentUser!.role == 'admin') {
         Get.offAllNamed('/admin');
       } else {
         Get.offAllNamed('/base');

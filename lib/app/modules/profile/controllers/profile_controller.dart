@@ -10,8 +10,8 @@ class ProfileController extends GetxController {
     super.onInit();
     if (!_initialized) {
       addresses.addAll([
-        '123 Main St, Springfield, USA',
-        '456 Market Ave, Lagos, Nigeria',
+        '123 Main St, Springfield, Ghana',
+        '456 Wa, Ghana',
       ]);
       paymentMethods.addAll([
         {'type': 'Credit Card', 'details': '**** **** **** 1234'},

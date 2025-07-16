@@ -228,7 +228,7 @@ class _AdminOrdersViewState extends State<AdminOrdersView> {
                                 ),
                               ),
                               4.verticalSpace,
-                              Text('Total: ₦${order['total'].toStringAsFixed(2)}', style: theme.textTheme.bodySmall),
+                              Text('Total: GHS${order['total'].toStringAsFixed(2)}', style: theme.textTheme.bodySmall),
                             ],
                           ),
                         ),

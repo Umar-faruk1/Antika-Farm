@@ -64,7 +64,7 @@ class ProductItem extends StatelessWidget {
                     ),
                   5.verticalSpace,
                   Text(
-                    '1kg, ${product.price}\$',
+                    'GHS${product.price}',
                     style: theme.textTheme.headlineSmall?.copyWith(
                       color: theme.colorScheme.secondary,
                     ),

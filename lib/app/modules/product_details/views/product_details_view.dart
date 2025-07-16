@@ -101,7 +101,7 @@ class ProductDetailsView extends GetView<ProductDetailsController> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
               child: Text(
-                '${controller.product.price}\$',
+                'GHS${controller.product.price}',
                 style: theme.textTheme.displaySmall?.copyWith(
                   color: theme.colorScheme.secondary,
                 ),
