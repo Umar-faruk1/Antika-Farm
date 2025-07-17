@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../controllers/calendar_controller.dart';
+import '../../orders/controllers/orders_controller.dart';
 
 class CalendarView extends GetView<CalendarController> {
   const CalendarView({Key? key}) : super(key: key);
@@ -10,39 +10,25 @@ class CalendarView extends GetView<CalendarController> {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    // Dummy orders data
-    final orders = [
-      {
-        'id': 'ORD-001',
-        'date': '2024-01-15',
-        'status': 'Delivered',
-        'total': 45.99,
-      },
-      {
-        'id': 'ORD-002',
-        'date': '2024-01-16',
-        'status': 'In Transit',
-        'total': 32.50,
-      },
-      {
-        'id': 'ORD-003',
-        'date': '2024-01-17',
-        'status': 'Processing',
-        'total': 28.75,
-      },
-    ];
+    final OrdersController ordersController = Get.put(OrdersController());
     return Scaffold(
       appBar: AppBar(
         title: Text('My Orders', style: theme.textTheme.displaySmall),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(24.w),
-        child: ListView.separated(
-          itemCount: orders.length,
+      body: Obx(() {
+        if (ordersController.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (ordersController.orders.isEmpty) {
+          return const Center(child: Text('No Orders Yet!'));
+        }
+        return ListView.separated(
+          padding: EdgeInsets.all(24.w),
           separatorBuilder: (_, __) => SizedBox(height: 16.h),
+          itemCount: ordersController.orders.length,
           itemBuilder: (context, index) {
-            final order = orders[index];
+            final order = ordersController.orders[index];
             return Container(
               padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
@@ -56,20 +42,23 @@ class CalendarView extends GetView<CalendarController> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Order #${order['id']}',
-                        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                      Expanded(
+                        child: Text(
+                          'Order #${order.id}',
+                          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                         decoration: BoxDecoration(
-                          color: _getStatusColor(order['status'] as String).withOpacity(0.1),
+                          color: _getStatusColor(order.status).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: Text(
-                          order['status'] as String,
+                          order.status,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: _getStatusColor(order['status'] as String),
+                            color: _getStatusColor(order.status),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -78,25 +67,51 @@ class CalendarView extends GetView<CalendarController> {
                   ),
                   8.verticalSpace,
                   Text(
-                    'Date: ${order['date']}',
+                    'Date: ${order.date}',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.textTheme.bodySmall?.color,
                     ),
                   ),
                   8.verticalSpace,
-                  Text(
-                    'Total: GHS${(order['total'] as num).toStringAsFixed(2)}',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: theme.primaryColor,
+                  Text('Items:', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  ...order.items.map((item) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    child: Row(
+                      children: [
+                        Expanded(child: Text(item['name'] ?? '', style: theme.textTheme.bodyMedium, overflow: TextOverflow.ellipsis)),
+                        Text('x${item['quantity']}', style: theme.textTheme.bodySmall),
+                      ],
                     ),
+                  )).toList(),
+                  12.verticalSpace,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Total: GHS${order.total.toStringAsFixed(2)}',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.primaryColor,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => Get.toNamed('/order-details', arguments: order.id),
+                        child: Text(
+                          'View Details',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.primaryColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             );
           },
-        ),
-      ),
+        );
+      }),
     );
   }
 

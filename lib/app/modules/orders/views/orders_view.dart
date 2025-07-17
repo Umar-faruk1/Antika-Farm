@@ -75,12 +75,13 @@ class OrdersView extends GetView<OrdersController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // match calendar_view.dart
             children: [
-              Text(
-                'Order #${order.id}',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+              Expanded(
+                child: Text(
+                  'Order #${order.id}',
+                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Container(
@@ -107,25 +108,31 @@ class OrdersView extends GetView<OrdersController> {
             ),
           ),
           8.verticalSpace,
-          Text(
-            'Items: ${order.items.join(', ')}',
-            style: theme.textTheme.bodyMedium,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
+          Text('Items:', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold)),
+          ...order.items.map((item) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: Row(
+              children: [
+                Expanded(child: Text(item['name'] ?? '', style: theme.textTheme.bodyMedium, overflow: TextOverflow.ellipsis)),
+                Text('x${item['quantity']}', style: theme.textTheme.bodySmall),
+              ],
+            ),
+          )).toList(),
           12.verticalSpace,
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Total: GHS${order.total.toStringAsFixed(2)}',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.primaryColor,
+              Expanded(
+                child: Text(
+                  'Total: GHS${order.total.toStringAsFixed(2)}',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.primaryColor,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               TextButton(
-                onPressed: () => controller.viewOrderDetails(order.id),
+                onPressed: () => Get.toNamed('/order-details', arguments: order.id),
                 child: Text(
                   'View Details',
                   style: theme.textTheme.bodyMedium?.copyWith(

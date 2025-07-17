@@ -1,44 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../../utils/dummy_helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AdminHomeView extends StatelessWidget {
   const AdminHomeView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Use dummy data directly for dashboard metrics
-    final products = DummyHelper.products;
-    final categories = DummyHelper.categories;
-    final users = [
-      {'id': 1, 'name': 'John Doe', 'email': 'john@example.com', 'role': 'Customer'},
-      {'id': 2, 'name': 'Jane Smith', 'email': 'jane@example.com', 'role': 'Customer'},
-      {'id': 3, 'name': 'Admin User', 'email': 'admin@example.com', 'role': 'Admin'},
-    ];
-    final orders = [
-      {
-        'id': 1,
-        'customer': 'John Doe',
-        'items': [
-          {'name': 'Tomatoes', 'quantity': 2, 'price': 5.99, 'category': 'Vegetables'},
-          {'name': 'Carrots', 'quantity': 1, 'price': 3.99, 'category': 'Vegetables'},
-        ],
-        'total': 15.97,
-        'status': 'Pending',
-        'date': '2024-01-15',
-      },
-      {
-        'id': 2,
-        'customer': 'Jane Smith',
-        'items': [
-          {'name': 'Lamb Meat', 'quantity': 1, 'price': 25.99, 'category': 'Livestock'},
-        ],
-        'total': 25.99,
-        'status': 'Delivered',
-        'date': '2024-01-14',
-      },
-    ];
-    final totalSales = orders.fold<double>(0.0, (sum, o) => sum + ((o['total'] as num?)?.toDouble() ?? 0.0));
-
+    // Remove dummy data, use Firestore for all metrics
     return Scaffold(
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -58,11 +27,48 @@ class AdminHomeView extends StatelessWidget {
               spacing: 16,
               runSpacing: 16,
               children: [
-                _DashboardCard(title: 'Products', value: products.length.toString(), icon: Icons.shopping_bag),
-                _DashboardCard(title: 'Categories', value: categories.length.toString(), icon: Icons.category),
-                _DashboardCard(title: 'Users', value: users.length.toString(), icon: Icons.people),
-                _DashboardCard(title: 'Orders', value: orders.length.toString(), icon: Icons.receipt_long),
-                _DashboardCard(title: 'Total Revenue', value: 'GHS${totalSales.toStringAsFixed(2)}', icon: Icons.attach_money),
+                StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                  stream: FirebaseFirestore.instance.collection('products').snapshots(),
+                  builder: (context, snapshot) {
+                    final count = snapshot.hasData ? snapshot.data!.docs.length : 0;
+                    return _DashboardCard(title: 'Products', value: count.toString(), icon: Icons.shopping_bag);
+                  },
+                ),
+                StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                  stream: FirebaseFirestore.instance.collection('categories').snapshots(),
+                  builder: (context, snapshot) {
+                    final count = snapshot.hasData ? snapshot.data!.docs.length : 0;
+                    return _DashboardCard(title: 'Categories', value: count.toString(), icon: Icons.category);
+                  },
+                ),
+                StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                  stream: FirebaseFirestore.instance.collection('users').snapshots(),
+                  builder: (context, snapshot) {
+                    final count = snapshot.hasData ? snapshot.data!.docs.length : 0;
+                    return _DashboardCard(title: 'Users', value: count.toString(), icon: Icons.people);
+                  },
+                ),
+                StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                  stream: FirebaseFirestore.instance.collection('orders').snapshots(),
+                  builder: (context, snapshot) {
+                    int orderCount = 0;
+                    double totalSales = 0.0;
+                    if (snapshot.hasData) {
+                      orderCount = snapshot.data!.docs.length;
+                      totalSales = snapshot.data!.docs.fold(0.0, (sum, doc) {
+                        final data = doc.data();
+                        return sum + ((data['total'] as num?)?.toDouble() ?? 0.0);
+                      });
+                    }
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _DashboardCard(title: 'Orders', value: orderCount.toString(), icon: Icons.receipt_long),
+                        _DashboardCard(title: 'Total Revenue', value: 'GHS${totalSales.toStringAsFixed(2)}', icon: Icons.attach_money),
+                      ],
+                    );
+                  },
+                ),
               ],
             ),
           ],

@@ -19,6 +19,7 @@ import '../modules/home/views/home_view.dart';
 import '../modules/orders/bindings/orders_binding.dart';
 import '../modules/orders/views/orders_view.dart';
 import '../modules/orders/views/order_confirmation_view.dart';
+import '../modules/orders/views/order_details_view.dart';
 import '../modules/product_details/bindings/product_details_binding.dart';
 import '../modules/product_details/views/product_details_view.dart';
 import '../modules/products/bindings/products_binding.dart';
@@ -136,6 +137,10 @@ class AppPages {
     GetPage(
       name: '/addresses',
       page: () => const AddressesView(),
+    ),
+    GetPage(
+      name: '/order-details',
+      page: () => const OrderDetailsView(),
     ),
     GetPage(
       name: '/admin',

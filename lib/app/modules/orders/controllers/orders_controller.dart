@@ -1,11 +1,17 @@
 import 'package:get/get.dart';
+import '../../../data/order_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../auth/controllers/auth_controller.dart';
 
 class Order {
   final String id;
   final String status;
   final double total;
-  final String date;
-  final List<String> items;
+  final DateTime date;
+  final List<dynamic> items;
+  final String address;
+  final String paymentMethod;
+  final String userName;
 
   Order({
     required this.id,
@@ -13,7 +19,24 @@ class Order {
     required this.total,
     required this.date,
     required this.items,
+    required this.address,
+    required this.paymentMethod,
+    required this.userName,
   });
+
+  factory Order.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return Order(
+      id: doc.id,
+      status: data['status'] ?? '',
+      total: (data['total'] as num?)?.toDouble() ?? 0.0,
+      date: (data['date'] as Timestamp).toDate(),
+      items: data['items'] ?? [],
+      address: data['address'] ?? '',
+      paymentMethod: data['paymentMethod'] ?? '',
+      userName: data['userName'] ?? '',
+    );
+  }
 }
 
 class OrdersController extends GetxController {
@@ -23,37 +46,15 @@ class OrdersController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadOrders();
+    fetchOrders();
   }
 
-  void loadOrders() {
+  void fetchOrders() {
     isLoading.value = true;
-    
-    // Simulate loading orders
-    Future.delayed(const Duration(seconds: 1), () {
-      orders.value = [
-        Order(
-          id: 'ORD-001',
-          status: 'Delivered',
-          total: 45.99,
-          date: '2024-01-15',
-          items: ['Tomatoes', 'Carrots', 'Spinach'],
-        ),
-        Order(
-          id: 'ORD-002',
-          status: 'In Transit',
-          total: 32.50,
-          date: '2024-01-16',
-          items: ['Bell Pepper', 'Cabbage', 'Ginger'],
-        ),
-        Order(
-          id: 'ORD-003',
-          status: 'Processing',
-          total: 28.75,
-          date: '2024-01-17',
-          items: ['Lamb Meat', 'Pumpkin'],
-        ),
-      ];
+    final authController = Get.find<AuthController>();
+    final user = authController.currentUser;
+    OrderService.getOrders(userId: user?.uid).listen((snapshot) {
+      orders.value = snapshot.docs.map((doc) => Order.fromFirestore(doc)).toList();
       isLoading.value = false;
     });
   }

@@ -4,6 +4,9 @@ import '../../../components/custom_snackbar.dart';
 
 import '../../cart/controllers/cart_controller.dart';
 import '../../profile/controllers/profile_controller.dart';
+import '../../../data/order_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../auth/controllers/auth_controller.dart';
 
 class CheckoutController extends GetxController {
   final cartController = Get.find<CartController>();
@@ -60,6 +63,26 @@ class CheckoutController extends GetxController {
     try {
       // Simulate order processing
       await Future.delayed(const Duration(seconds: 2));
+
+      // Save order to Firestore
+      final authController = Get.find<AuthController>();
+      final user = authController.currentUser;
+      final orderData = {
+        'userId': user?.uid ?? '',
+        'userName': user?.name ?? '',
+        'address': deliveryAddress.value,
+        'paymentMethod': selectedPaymentMethod.value,
+        'status': 'Processing',
+        'total': totalAmount,
+        'date': Timestamp.now(),
+        'items': cartController.cartItems.map((item) => {
+          'productId': item.product.id,
+          'name': item.product.name,
+          'quantity': item.quantity,
+          'price': item.product.price,
+        }).toList(),
+      };
+      await OrderService.addOrder(orderData);
 
       // Clear cart
       cartController.clearCart();
