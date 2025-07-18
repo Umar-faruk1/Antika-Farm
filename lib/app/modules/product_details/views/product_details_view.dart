@@ -48,14 +48,14 @@ class ProductDetailsView extends GetView<ProductDetailsController> {
                             color: theme.appBarTheme.iconTheme?.color,
                           ),
                         ),
-                        CustomIconButton(
-                          onPressed: () {},
-                          icon: SvgPicture.asset(
-                            Constants.searchIcon,
-                            fit: BoxFit.none,
-                            color: theme.appBarTheme.iconTheme?.color,
-                          ),
-                        ),
+                        // CustomIconButton(
+                        //   onPressed: () {},
+                        //   icon: SvgPicture.asset(
+                        //     Constants.searchIcon,
+                        //     fit: BoxFit.none,
+                        //     color: theme.appBarTheme.iconTheme?.color,
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -78,25 +78,25 @@ class ProductDetailsView extends GetView<ProductDetailsController> {
               ),
             ),
             30.verticalSpace,
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Row(
-                children: [
-                  Text(
-                    controller.product.name,
-                    style: theme.textTheme.displayMedium,
-                  ).animate().fade().slideX(
-                    duration: 300.ms,
-                    begin: -1,
-                    curve: Curves.easeInSine,
-                  ),
-                  const Spacer(),
-                  ProductCountItem(product: controller.product).animate().fade(
-                    duration: 200.ms
-                  ),
-                ],
-              ),
-            ),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 24.w),
+            //   child: Row(
+            //     children: [
+            //       Text(
+            //         controller.product.name,
+            //         style: theme.textTheme.displayMedium,
+            //       ).animate().fade().slideX(
+            //         duration: 300.ms,
+            //         begin: -1,
+            //         curve: Curves.easeInSine,
+            //       ),
+            //       const Spacer(),
+            //       ProductCountItem(product: controller.product).animate().fade(
+            //         duration: 200.ms
+            //       ),
+            //     ],
+            //   ),
+            // ),
             8.verticalSpace,
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),

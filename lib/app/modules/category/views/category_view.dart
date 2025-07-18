@@ -42,7 +42,20 @@ class CategoryView extends GetView<CategoryController> {
                     value: controller.selectedCategory.value.isNotEmpty ? controller.selectedCategory.value : null,
                     items: [
                       DropdownMenuItem(value: '', child: Text('All Categories')),
-                      ...controller.categories.map((cat) => DropdownMenuItem(value: cat.id, child: Text(cat.title)))
+                      ...controller.categories.map(
+                        (cat) => DropdownMenuItem(
+                          value: cat.id,
+                          child: SizedBox(
+                            width: 110.w,
+                          
+                          child: Text(
+                            cat.title,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+                      ),
+                      ),
                     ],
                     onChanged: controller.onCategoryChanged,
                     decoration: InputDecoration(

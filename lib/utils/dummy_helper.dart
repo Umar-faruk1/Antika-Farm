@@ -9,7 +9,7 @@ class DummyHelper {
 
   static List<Map<String, String>> cards = [
     {'icon': Constants.lotus, 'title': '100%', 'subtitle': 'Organic'},
-    {'icon': Constants.calendar, 'title': '1 Year', 'subtitle': 'Expiration'},
+    {'icon': Constants.calendar, 'title': '2 Year', 'subtitle': 'Expiration'},
     {'icon': Constants.favourites, 'title': '4.8 (256)', 'subtitle': 'Reviews'},
     {'icon': Constants.matches, 'title': '80 kcal', 'subtitle': '100 Gram'},
   ];
