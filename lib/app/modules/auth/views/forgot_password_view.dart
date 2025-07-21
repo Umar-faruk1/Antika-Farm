@@ -11,7 +11,8 @@ class ForgotPasswordView extends GetView<AuthController> {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    final emailController = TextEditingController();
+    // Use persistent controller from AuthController
+    final emailController = controller.forgotEmailController;
 
     return Scaffold(
       body: Container(

@@ -15,8 +15,8 @@ class _PaymentMethodsViewState extends State<PaymentMethodsView> {
   final ProfileController profileController = Get.find<ProfileController>();
 
   void _showPaymentDialog({Map<String, String>? initial, int? editIndex}) {
-    final typeController = TextEditingController(text: initial?['type'] ?? '');
-    final detailsController = TextEditingController(text: initial?['details'] ?? '');
+    profileController.paymentTypeController.text = initial?['type'] ?? '';
+    profileController.paymentDetailsController.text = initial?['details'] ?? '';
     String selectedType = initial?['type'] ?? '';
     showDialog(
       context: context,
@@ -36,8 +36,8 @@ class _PaymentMethodsViewState extends State<PaymentMethodsView> {
                 onChanged: (val) {
                   setState(() {
                     selectedType = val ?? '';
-                    typeController.text = selectedType;
-                    detailsController.text = '';
+                    profileController.paymentTypeController.text = selectedType;
+                    profileController.paymentDetailsController.text = '';
                   });
                 },
                 decoration: const InputDecoration(hintText: 'Type'),
@@ -45,17 +45,17 @@ class _PaymentMethodsViewState extends State<PaymentMethodsView> {
               16.verticalSpace,
               if (selectedType == 'Credit Card')
                 TextField(
-                  controller: detailsController,
+                  controller: profileController.paymentDetailsController,
                   decoration: const InputDecoration(hintText: 'Card Number (e.g. **** **** **** 1234)'),
                 )
               else if (selectedType == 'PayPal')
                 TextField(
-                  controller: detailsController,
+                  controller: profileController.paymentDetailsController,
                   decoration: const InputDecoration(hintText: 'PayPal Email'),
                 )
               else if (selectedType == 'Momo')
                 TextField(
-                  controller: detailsController,
+                  controller: profileController.paymentDetailsController,
                   keyboardType: TextInputType.phone,
                   decoration: const InputDecoration(hintText: 'Momo Phone Number'),
                 ),
@@ -68,8 +68,8 @@ class _PaymentMethodsViewState extends State<PaymentMethodsView> {
             ),
             ElevatedButton(
               onPressed: () {
-                final type = typeController.text.trim();
-                final details = detailsController.text.trim();
+                final type = profileController.paymentTypeController.text.trim();
+                final details = profileController.paymentDetailsController.text.trim();
                 if (type.isNotEmpty && details.isNotEmpty) {
                   if (type == 'Momo' && !RegExp(r'^\+?\d{9,15}\$').hasMatch(details)) {
                     CustomSnackBar.showCustomErrorSnackBar(title: 'Invalid', message: 'Enter a valid phone number for Momo');

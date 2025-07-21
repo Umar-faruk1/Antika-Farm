@@ -12,11 +12,12 @@ class RegisterView extends GetView<AuthController> {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    final nameController = TextEditingController();
-    final emailController = TextEditingController();
-    final phoneController = TextEditingController();
-    final passwordController = TextEditingController();
-    final confirmPasswordController = TextEditingController();
+    // Use persistent controllers from AuthController
+    final nameController = controller.registerNameController;
+    final emailController = controller.registerEmailController;
+    final phoneController = controller.registerPhoneController;
+    final passwordController = controller.registerPasswordController;
+    final confirmPasswordController = controller.registerConfirmPasswordController;
     final agreeTerms = false.obs;
     final RxBool obscurePassword = true.obs;
     final RxBool obscureConfirmPassword = true.obs;
@@ -105,20 +106,20 @@ class RegisterView extends GetView<AuthController> {
                         borderRound: 12.r,
                       ),
                       16.verticalSpace,
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text('Phone Number', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500)),
-                      ),
-                      8.verticalSpace,
-                      CustomFormField(
-                        controller: phoneController,
-                        hint: 'Enter your phone number',
-                        keyboardType: TextInputType.phone,
-                        prefixIcon: Icon(Icons.phone_outlined, color: theme.primaryColor),
-                        backgroundColor: Colors.grey[100],
-                        borderRound: 12.r,
-                      ),
-                      16.verticalSpace,
+                      // Align(
+                      //   alignment: Alignment.centerLeft,
+                      //   child: Text('Phone Number', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500)),
+                      // ),
+                      // 8.verticalSpace,
+                      // CustomFormField(
+                      //   controller: phoneController,
+                      //   hint: 'Enter your phone number',
+                      //   keyboardType: TextInputType.phone,
+                      //   prefixIcon: Icon(Icons.phone_outlined, color: theme.primaryColor),
+                      //   backgroundColor: Colors.grey[100],
+                      //   borderRound: 12.r,
+                      // ),
+                      // 16.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text('Password', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500)),

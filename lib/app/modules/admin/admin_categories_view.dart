@@ -16,6 +16,15 @@ class _AdminCategoriesViewState extends State<AdminCategoriesView> {
   List<CategoryModel> _categories = [];
   bool _loading = true;
 
+  // Persistent controller for category dialog
+  final titleController = TextEditingController();
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -29,7 +38,7 @@ class _AdminCategoriesViewState extends State<AdminCategoriesView> {
   }
 
   void _showCategoryDialog({CategoryModel? initial, int? editIndex}) {
-    final titleController = TextEditingController(text: initial?.title ?? '');
+    titleController.text = initial?.title ?? '';
     String? selectedImagePath = initial?.image;
     XFile? pickedImage;
     final ImagePicker _picker = ImagePicker();

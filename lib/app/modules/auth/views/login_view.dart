@@ -11,8 +11,9 @@ class LoginView extends GetView<AuthController> {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
+    // Use persistent controllers from AuthController
+    final emailController = controller.loginEmailController;
+    final passwordController = controller.loginPasswordController;
     final rememberMe = false.obs;
     final RxBool obscurePassword = true.obs;
 

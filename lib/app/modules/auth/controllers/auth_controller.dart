@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../components/custom_snackbar.dart';
+import 'package:flutter/material.dart';
 
 
 class AuthController extends GetxController {
@@ -11,6 +12,18 @@ class AuthController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   UserModel? currentUser;
+
+  // Persistent controllers for login
+  final loginEmailController = TextEditingController();
+  final loginPasswordController = TextEditingController();
+  // Persistent controllers for register
+  final registerNameController = TextEditingController();
+  final registerEmailController = TextEditingController();
+  final registerPhoneController = TextEditingController();
+  final registerPasswordController = TextEditingController();
+  final registerConfirmPasswordController = TextEditingController();
+  // Persistent controller for forgot password
+  final forgotEmailController = TextEditingController();
 
   void setLoading(bool value) {
     isLoading.value = value;
@@ -95,5 +108,18 @@ class AuthController extends GetxController {
     setLoggedIn(false);
     currentUser = null;
     Get.offAllNamed('/login');
+  }
+
+  @override
+  void onClose() {
+    loginEmailController.dispose();
+    loginPasswordController.dispose();
+    registerNameController.dispose();
+    registerEmailController.dispose();
+    registerPhoneController.dispose();
+    registerPasswordController.dispose();
+    registerConfirmPasswordController.dispose();
+    forgotEmailController.dispose();
+    super.onClose();
   }
 } 

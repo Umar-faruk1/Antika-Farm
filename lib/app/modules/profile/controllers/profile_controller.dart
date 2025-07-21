@@ -1,24 +1,29 @@
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 
 class ProfileController extends GetxController {
   final addresses = <String>[].obs;
   final paymentMethods = <Map<String, String>>[].obs;
   bool _initialized = false;
 
+  // Persistent controllers for dialogs
+  final addressController = TextEditingController();
+  final paymentTypeController = TextEditingController();
+  final paymentDetailsController = TextEditingController();
+
   @override
   void onInit() {
     super.onInit();
     if (!_initialized) {
-      addresses.addAll([
-        '123 Main St, Springfield, Ghana',
-        '456 Wa, Ghana',
-      ]);
-      paymentMethods.addAll([
-        {'type': 'Credit Card', 'details': '**** **** **** 1234'},
-        {'type': 'PayPal', 'details': 'user@email.com'},
-        {'type': 'Momo', 'details': '+233 123 456 789'},
-      ]);
       _initialized = true;
     }
+  }
+
+  @override
+  void onClose() {
+    addressController.dispose();
+    paymentTypeController.dispose();
+    paymentDetailsController.dispose();
+    super.onClose();
   }
 }

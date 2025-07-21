@@ -20,6 +20,19 @@ class _AdminProductsViewState extends State<AdminProductsView> {
   bool _loading = true;
   bool _loadingCategories = true;
 
+  // Persistent controllers for product dialog
+  final nameController = TextEditingController();
+  final priceController = TextEditingController();
+  final descController = TextEditingController();
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    priceController.dispose();
+    descController.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -40,9 +53,9 @@ class _AdminProductsViewState extends State<AdminProductsView> {
   }
 
   void _showProductDialog({ProductModel? initial, int? editIndex}) {
-    final nameController = TextEditingController(text: initial?.name ?? '');
-    final priceController = TextEditingController(text: initial?.price.toString() ?? '');
-    final descController = TextEditingController(text: initial?.description ?? '');
+    nameController.text = initial?.name ?? '';
+    priceController.text = initial?.price.toString() ?? '';
+    descController.text = initial?.description ?? '';
     String selectedCategoryId = initial?.categoryId ?? (_categories.isNotEmpty ? _categories.first.id : '');
     String? selectedImagePath = initial?.image;
     XFile? pickedImage;
@@ -121,8 +134,8 @@ class _AdminProductsViewState extends State<AdminProductsView> {
                 TextField(
                   controller: descController,
                   decoration: const InputDecoration(hintText: 'Description'),
-                  minLines: 1,
-                  maxLines: 3,
+                  minLines: 2,
+                  maxLines: 4,
                 ),
               ],
             ),

@@ -56,13 +56,16 @@ class WelcomeView extends GetView<WelcomeController> {
                 24.verticalSpace,
                 Text(
                   'We’re glad you’re here.\nManage your farm, track your produce, and grow your agribusiness effortlessly!',
-                  // style: theme.textTheme.bodyLarge,
-                  textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                    color: const Color(0xFFFFFFFF), // Customize the color here
+              ),
+                textAlign: TextAlign.center,
                 ).animate().fade().slideY(
-                  duration: 300.ms,
-                  begin: 1,
-                  curve: Curves.easeInSine,
-                ),
+              duration: 300.ms,
+              begin: 1,
+              curve: Curves.easeInSine,
+      ),
+
                 40.verticalSpace,
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 70.w),

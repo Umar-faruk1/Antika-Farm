@@ -14,13 +14,13 @@ class _AddressesViewState extends State<AddressesView> {
   final ProfileController profileController = Get.find<ProfileController>();
 
   void _showAddressDialog({String? initial, int? editIndex}) {
-    final controller = TextEditingController(text: initial ?? '');
+    profileController.addressController.text = initial ?? '';
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(editIndex == null ? 'Add Address' : 'Edit Address'),
         content: TextField(
-          controller: controller,
+          controller: profileController.addressController,
           decoration: const InputDecoration(hintText: 'Enter address'),
           autofocus: true,
           minLines: 1,
@@ -33,7 +33,7 @@ class _AddressesViewState extends State<AddressesView> {
           ),
           ElevatedButton(
             onPressed: () {
-              final text = controller.text.trim();
+              final text = profileController.addressController.text.trim();
               if (text.isNotEmpty) {
                 if (editIndex == null) {
                   profileController.addresses.add(text);
