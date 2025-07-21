@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../controllers/profile_controller.dart';
+import 'package:flutter/services.dart';
 
 class PaymentMethodsView extends StatefulWidget {
   const PaymentMethodsView({Key? key}) : super(key: key);
@@ -56,7 +57,11 @@ class _PaymentMethodsViewState extends State<PaymentMethodsView> {
               else if (selectedType == 'Momo')
                 TextField(
                   controller: profileController.paymentDetailsController,
-                  keyboardType: TextInputType.phone,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(10),
+                  ],
                   decoration: const InputDecoration(hintText: 'Momo Phone Number'),
                 ),
             ],
@@ -71,7 +76,7 @@ class _PaymentMethodsViewState extends State<PaymentMethodsView> {
                 final type = profileController.paymentTypeController.text.trim();
                 final details = profileController.paymentDetailsController.text.trim();
                 if (type.isNotEmpty && details.isNotEmpty) {
-                  if (type == 'Momo' && !RegExp(r'^\+?\d{9,15}\$').hasMatch(details)) {
+                  if (type == 'Momo' && !RegExp(r'^0\d{9}$').hasMatch(details)) {
                     CustomSnackBar.showCustomErrorSnackBar(title: 'Invalid', message: 'Enter a valid phone number for Momo');
                     return;
                   }

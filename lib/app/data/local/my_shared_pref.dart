@@ -15,6 +15,10 @@ class MySharedPref {
   static const String _currentLocalKey = 'current_local';
   static const String _lightThemeKey = 'is_theme_light';
 
+  // --- User Data Persistence ---
+  static const String addressesKey = 'user_addresses';
+  static const String paymentMethodsKey = 'user_payment_methods';
+
   /// init get storage services
   static Future<void> init() async {
     _sharedPreferences = await SharedPreferences.getInstance();
@@ -53,6 +57,18 @@ class MySharedPref {
   /// get generated fcm token
   static String? getFcmToken() =>
       _sharedPreferences.getString(_fcmTokenKey);
+
+  static Future<void> setUserAddresses(List<String> addresses) =>
+      _sharedPreferences.setStringList(addressesKey, addresses);
+
+  static List<String> getUserAddresses() =>
+      _sharedPreferences.getStringList(addressesKey) ?? [];
+
+  static Future<void> setUserPaymentMethods(String jsonString) =>
+      _sharedPreferences.setString(paymentMethodsKey, jsonString);
+
+  static String? getUserPaymentMethods() =>
+      _sharedPreferences.getString(paymentMethodsKey);
 
   /// clear all data from shared pref
   static Future<void> clear() async => await _sharedPreferences.clear();
