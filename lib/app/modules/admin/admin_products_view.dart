@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../data/category_service.dart';
 import '../../data/models/category_model.dart';
+import '../../data/storage_service.dart';
 
 class AdminProductsView extends StatefulWidget {
   const AdminProductsView({Key? key}) : super(key: key);
@@ -91,12 +92,19 @@ class _AdminProductsViewState extends State<AdminProductsView> {
                     child: selectedImagePath != null
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(8),
-                            child: Image.file(
-                              File(selectedImagePath!),
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: 120,
-                            ),
+                            child: selectedImagePath!.startsWith('http')
+                                ? Image.network(
+                                    selectedImagePath!,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: 120,
+                                  )
+                                : Image.file(
+                                    File(selectedImagePath!),
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: 120,
+                                  ),
                           )
                         : Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -151,11 +159,19 @@ class _AdminProductsViewState extends State<AdminProductsView> {
                 final price = double.tryParse(priceController.text.trim()) ?? 0.0;
                 final desc = descController.text.trim();
                 if (name.isNotEmpty && desc.isNotEmpty) {
+                  String imageUrl = selectedImagePath ?? '';
+                  // If pickedImage is present, upload to Firebase Storage first
+                  if (pickedImage != null) {
+                    imageUrl = await StorageService.uploadFile(
+                      File(pickedImage!.path),
+                      'products',
+                    );
+                  }
                   if (initial == null) {
                     await ProductService.addProduct(ProductModel(
                       id: '', // Firestore will assign
                       categoryId: selectedCategoryId,
-                      image: selectedImagePath ?? '',
+                      image: imageUrl,
                       name: name,
                       quantity: 0,
                       price: price,
@@ -165,7 +181,7 @@ class _AdminProductsViewState extends State<AdminProductsView> {
                     await ProductService.updateProduct(ProductModel(
                       id: initial.id,
                       categoryId: selectedCategoryId,
-                      image: selectedImagePath ?? initial.image,
+                      image: imageUrl.isNotEmpty ? imageUrl : initial.image,
                       name: name,
                       quantity: initial.quantity,
                       price: price,

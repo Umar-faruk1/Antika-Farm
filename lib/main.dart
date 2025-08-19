@@ -10,11 +10,14 @@ import 'config/translations/localization_service.dart';
 import 'app/modules/cart/controllers/cart_controller.dart';
 import 'app/modules/profile/controllers/profile_controller.dart';
 import 'app/modules/auth/controllers/auth_controller.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
   // wait for bindings
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   // init shared preference
   await MySharedPref.init();

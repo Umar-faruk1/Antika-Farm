@@ -4,6 +4,7 @@ import '../../data/category_service.dart';
 import '../../data/models/category_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import '../../data/storage_service.dart';
 
 class AdminCategoriesView extends StatefulWidget {
   const AdminCategoriesView({Key? key}) : super(key: key);
@@ -73,12 +74,19 @@ class _AdminCategoriesViewState extends State<AdminCategoriesView> {
                     child: selectedImagePath != null
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(8),
-                            child: Image.file(
-                              File(selectedImagePath!),
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: 120,
-                            ),
+                            child: selectedImagePath!.startsWith('http')
+                                ? Image.network(
+                                    selectedImagePath!,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: 120,
+                                  )
+                                : Image.file(
+                                    File(selectedImagePath!),
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: 120,
+                                  ),
                           )
                         : Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -108,17 +116,24 @@ class _AdminCategoriesViewState extends State<AdminCategoriesView> {
               onPressed: () async {
                 final title = titleController.text.trim();
                 if (title.isNotEmpty) {
+                  String imageUrl = selectedImagePath ?? '';
+                  if (pickedImage != null) {
+                    imageUrl = await StorageService.uploadFile(
+                      File(pickedImage!.path),
+                      'categories',
+                    );
+                  }
                   if (initial == null) {
                     await CategoryService.addCategory(CategoryModel(
                       id: '', // Firestore will assign
                       title: title,
-                      image: selectedImagePath ?? '',
+                      image: imageUrl,
                     ));
                   } else {
                     await CategoryService.updateCategory(CategoryModel(
                       id: initial.id,
                       title: title,
-                      image: selectedImagePath ?? initial.image,
+                      image: imageUrl.isNotEmpty ? imageUrl : initial.image,
                     ));
                   }
                   await _fetchCategories();
